@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import productModel from "../models/product.model.js";
 import messageModel from '../models/message.model.js';
 import cartModel from "../models/cart.model.js";
@@ -18,30 +19,71 @@ export const renderProducts = async (req, res) => {
     : '';
     result.isValid = !(page <= 0 || page > result.totalPages);
 
+
     const user = req.session.user;
-    const cartId = req.session.cartId || user.cartId;
+    // const cartId = req.session.cartId || user.cartId;
+
+    const cartId = user ? user.cart : null;
+
+    console.log("Cart ID:", cartId);  // Verifica que este log muestra el cartId correctamente
 
     res.render("products", { ...result, user, cartId});
 };
 
+
+// export const renderCart = async (req, res) => {
+//     try {
+//         const { cid } = req.params;
+
+//         if (!mongoose.Types.ObjectId.isValid(cid)) {
+//             console.error(`ID de carrito no válido: ${cid}`);
+//             return res.status(400).json({ error: "ID de carrito no válido" });
+//         }
+
+//         // Obtener el carrito de la base de datos
+//         let cart = await cartModel.findById(cid).populate('products.product').populate('user').lean();
+
+//         if (!cart) {
+//             console.error(`Carrito no encontrado para ID: ${cid}`);
+//             return res.status(404).json({ error: "Carrito no encontrado" });
+//         }
+
+//         console.log('Carrito encontrado:', cart);
+
+//         // Renderizar la vista con los productos del carrito
+//         res.render('carts', { cart });
+//     } catch (error) {
+//         console.error("Error al obtener el carrito:", error);
+//         res.status(500).json({ error: "Ocurrió un error al obtener el carrito" });
+//     }
+// };
+
+
+
+
 export const renderCart = async (req, res) => {
     const { cid } = req.params;
 
-    console.log('Carrito ID:', cid);
+    try {
+        const cartId = req.session.cartId || user.cartId;
 
-    const user = req.session.user;
+        const user = req.session.user;  // Obtener el usuario desde la sesión
 
-    console.log('Usuario en sesión:', user);
+        const cart = await cartModel.findById(cid).populate('products.product').lean();  
 
+        if (!cartId) {
+            return res.status(404).json({ error: "Carrito no encontrado" });
+        }
 
-    const cart = await cartModel.findById(cid).populate('products.product').populate('user').lean();
-
-    if (!cart) {
-    return res.status(404).json({ error: "Carrito no encontrado" });
+        // Renderizar la vista 'carts' con los productos del carrito y el usuario
+        res.render("carts", { cart, user });
+    } catch (error) {
+        console.error("Error al obtener el carrito:", error);
+        return res.status(500).json({ error: "Error al obtener el carrito" });
     }
-
-    res.render("carts", {cart, user});
 };
+
+
 
 export const renderLoginPage = (req, res) => {
     res.render("login");

@@ -6,6 +6,9 @@ import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
 
+import CartDAO from '../dao/cart/cart.dao.js';
+const cartService = new CartDAO();
+
 dotenv.config();
 
 export const registerUser = (req, res, next) => {
@@ -38,10 +41,23 @@ export const loginUser = (req, res, next) => {
     if (!user) {
         return res.status(400).send({ status: "Error", error: "Error al iniciar sesión" });
     }
-    req.logIn(user, (err) => {
+    req.logIn(user, async (err) => {
         if (err) {
         return next(err);
         }
+        // Verificar si el usuario tiene un carrito asociado
+        if (!user.cart) {
+            try {
+                // Crear un nuevo carrito para el usuario
+                const { message, cart } = await cartService.createCartForUser(user._id);
+
+                // Actualizar el usuario con el nuevo carrito
+                user.cart = cart._id;
+                await user.save();
+
+
+
+
 
         req.session.user = {
             _id: user._id,
@@ -52,6 +68,21 @@ export const loginUser = (req, res, next) => {
             cart: user.cart,
             role: user.role,
         };
+    } catch (error) {
+        console.error("Error al crear el carrito:", error);
+        return res.status(500).send({ status: "Error", error: "Error al crear el carrito" });
+    }
+} else {
+    req.session.user = {
+        _id: user._id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        age: user.age,
+        cart: user.cart,
+        role: user.role,
+    };
+}
 
         if (user.role === 'admin') {
             return res.redirect('/admin/products');

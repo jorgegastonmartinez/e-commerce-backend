@@ -122,6 +122,29 @@ export const clearCart = async (req, res) => {
     }
 };
 
+
+
+// export const renderCart = async (req, res) => {
+//     try {
+//         const { cid } = req.params;
+
+//         // Obtén el carrito desde la base de datos usando el ID de la ruta
+//         const cart = await cartsModel.findById(cid).populate('products.product').populate('user').lean();
+
+//         if (!cart) {
+//             return res.status(404).json({ error: "Carrito no encontrado" });
+//         }
+
+//         // Renderiza la vista del carrito y pasa los datos del carrito
+//         res.render("carts", { cart });
+//     } catch (error) {
+//         console.error("Error al obtener el carrito:", error);
+//         return res.status(500).send({ error: "Error al obtener el carrito" });
+//     }
+// };
+
+
+
 export const purchaseCart = async (req, res) => {
     try {
         const { cid } = req.params;
