@@ -31,7 +31,7 @@ export const isPremium = (req, res, next) => {
 };
 
 export const isUser = (req, res, next) => {
-    if (req.session.user && req.session.user.role === 'user' || "User") {
+    if (req.session.user && req.session.user.role === 'user') {
         return next();
     } else {
         res.redirect("/login");

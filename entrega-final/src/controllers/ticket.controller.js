@@ -30,21 +30,51 @@ export const createTicket = async (req, res) => {
     const userEmail = req.session.user.email; 
 
     try {
-        const cart = await cartService.findById(cid).lean();
-        if (!cart) {
-            return res.status(404).json({ error: 'Carrito no encontrado' });
+
+
+        // Usa getCartById para obtener el carrito
+        // const { cart, message } = await cartService.getCartById(cid);
+
+        const cartResult = await cartService.getCartById(cid);
+        const cart = cartResult.cart;
+
+        // const cart = await cartService.findById(cid).lean();
+        if (!cart || cart.products.length === 0) {
+            return res.status(400).json({ error: 'El carrito está vacío' });
         }
+
+        // Imprime el carrito para verificar el total
+        console.log('Cart:', cart);
+
+
+        const purchase_datetime = new Date(); // Agregar la fecha de la compra
+        const amount = cart.total; // Asegúrate de que `cart.total` tenga el valor correcto
+
+
+
+          // Imprime los valores en la consola para depuración
+          console.log('Cart:', cart);
+          console.log('Purchase Date Time:', purchase_datetime);
+          console.log('Amount:', amount);
+          console.log('User Email:', userEmail);
+          console.log('Cart ID:', cid);
+    
+
 
         const ticket = await ticketsService.createTicket({
             purchase_datetime,
-            amount: cart.total,
+            amount,
             purchaser: userEmail,  
             cartId: cid           
         });
 
-        await Cart.findByIdAndUpdate(cid, { products: [], total: 0 });
+        // await Cart.findByIdAndUpdate(cid, { products: [], total: 0 });
 
-        res.status(201).json(ticket);
+        await cartsModel.findByIdAndUpdate(cid, { products: [], total: 0 });
+
+        // res.status(201).json(ticket);
+
+        res.redirect(`/api/ticket/view/${ticket._id}`);
     } catch (error) {
         res.status(500).send({ status: "error", message: error.message })
     }
@@ -65,6 +95,11 @@ export const renderTicket = async (req, res) => {
         console.log('Ticket:', ticket);
         console.log('Cart:', cart);
 
+        //
+
+        const isCartEmpty = cart && cart.products.length === 0; // Asegúrate de que `cart` no sea `null`
+        //
+
         const userDTO = new UserDTO(req.session.user);
 
         const ticketData = {
@@ -74,6 +109,7 @@ export const renderTicket = async (req, res) => {
             cartId: ticket.cartId.toString(),
             code: ticket.code,
             purchase_datetime: ticket.purchase_datetime,
+            isCartEmpty: isCartEmpty // Pasa esta información a la vista
         };
 
         res.render('ticket', { ticket: ticketData });

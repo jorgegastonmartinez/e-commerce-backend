@@ -1,6 +1,6 @@
 ## Título del Proyecto
 
-Cuarta práctica integradora clase 44.
+Entrega Final Curso de Backend.
 
 ## Curso
 
@@ -13,7 +13,7 @@ Jorge Martinez.
 ## Comandos
 
 ```
-git clone https://github.com/jorgegastonmartinez/practicas-backend.git
+git clone https://github.com/jorgegastonmartinez/e-commerce-backend.git
 npm start
 ```
 

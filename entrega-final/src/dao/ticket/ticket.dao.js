@@ -24,11 +24,12 @@ export default class Ticket {
 
     createTicket = async (ticket) => {
         try {
+            console.log('Creating ticket with data:', ticket);
             let result = await ticketModel.create(ticket);
             return result
         } catch (error) {
-            console.log(error);
-            return null
+            console.error('Error al crear el ticket:', error);
+            throw new Error('Error al crear el ticket');
         }
     }
 

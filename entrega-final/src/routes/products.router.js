@@ -7,7 +7,7 @@ import {
 
 const router = Router();
 
-router.get("/products", isAuthenticated, isUser, getProducts);
+router.get("/products", isAuthenticated, getProducts);
 router.get("/products/:pid", isAuthenticated, isUser, getProductById);
 
 export default router;

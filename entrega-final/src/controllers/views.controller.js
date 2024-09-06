@@ -19,20 +19,27 @@ export const renderProducts = async (req, res) => {
     result.isValid = !(page <= 0 || page > result.totalPages);
 
     const user = req.session.user;
+    const cartId = req.session.cartId || user.cartId;
 
-    res.render("products", { ...result, user});
+    res.render("products", { ...result, user, cartId});
 };
 
 export const renderCart = async (req, res) => {
     const { cid } = req.params;
 
+    console.log('Carrito ID:', cid);
+
     const user = req.session.user;
+
+    console.log('Usuario en sesión:', user);
+
 
     const cart = await cartModel.findById(cid).populate('products.product').populate('user').lean();
 
     if (!cart) {
     return res.status(404).json({ error: "Carrito no encontrado" });
     }
+
     res.render("carts", {cart, user});
 };
 

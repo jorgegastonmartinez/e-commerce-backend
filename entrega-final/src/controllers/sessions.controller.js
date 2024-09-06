@@ -57,7 +57,7 @@ export const loginUser = (req, res, next) => {
             return res.redirect('/admin/products');
         } else if (user.role === 'premium') {
             return res.redirect('premium/products')
-        } else if (user.role === 'user' || "User") {
+        } else if (user.role === 'user') {
             return res.redirect('/products');
         } else {
             return res.redirect('/not-authorized');

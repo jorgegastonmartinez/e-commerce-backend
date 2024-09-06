@@ -1,3 +1,33 @@
+{{!-- <!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ticket #{{ticket.code}}</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+  <header>
+    <h1>Detalles del Ticket</h1>
+  </header>
+  <main>
+    <section>
+      <h2>Ticket #{{ticket.id}}</h2>
+      <p><strong>Fecha de Compra:</strong> {{ticket.purchase_datetime}}</p>
+      <p><strong>Total:</strong> ${{ticket.amount}}</p>
+      <p><strong>Comprador:</strong> {{ticket.purchaser.email}}</p>
+      <p><strong>Código:</strong> {{ticket.code}}</p>
+    </section>
+    <a href="/api/carts/{{ticket.cartId}}" class="btn">Volver al Carrito</a>
+  </main>
+</body>
+
+</html> --}}
+
+
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -18,9 +48,17 @@
       <p><strong>Fecha de Compra:</strong> {{ticket.purchase_datetime}}</p>
       <p><strong>Total:</strong> ${{ticket.amount}}</p>
       <p><strong>Comprador:</strong> {{ticket.purchaser.email}}</p>
-      <p>Código: {{ticket.code}}</p>
+      <p><strong>Código:</strong> {{ticket.code}}</p>
     </section>
-    <a href="/api/carts/{{cartId}}" class="btn">Volver al Carrito</a>
+
+    {{#if ticket.isCartEmpty}}
+      <p>Tu carrito está vacío.</p>
+
+  
+      <a href="/products" class="btn">Volver a la Tienda</a> <!-- Botón para volver a la tienda -->
+    {{else}}
+      <a href="/api/carts/{{ticket.cartId}}" class="btn">Volver al Carrito</a>
+    {{/if}}
   </main>
 </body>
 
