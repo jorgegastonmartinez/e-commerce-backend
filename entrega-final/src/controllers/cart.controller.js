@@ -123,50 +123,20 @@ export const clearCart = async (req, res) => {
 };
 
 
-
-// export const renderCart = async (req, res) => {
-//     try {
-//         const { cid } = req.params;
-
-//         // Obtén el carrito desde la base de datos usando el ID de la ruta
-//         const cart = await cartsModel.findById(cid).populate('products.product').populate('user').lean();
-
-//         if (!cart) {
-//             return res.status(404).json({ error: "Carrito no encontrado" });
-//         }
-
-//         // Renderiza la vista del carrito y pasa los datos del carrito
-//         res.render("carts", { cart });
-//     } catch (error) {
-//         console.error("Error al obtener el carrito:", error);
-//         return res.status(500).send({ error: "Error al obtener el carrito" });
-//     }
-// };
-
-
-
 export const purchaseCart = async (req, res) => {
     try {
         const { cid } = req.params;
-        const { userId, userEmail } = req.body;  
+        const userId = req.session.user._id;  
 
         if (!mongoose.Types.ObjectId.isValid(cid) || !mongoose.Types.ObjectId.isValid(userId)) {
             console.error('ID de carrito o usuario no válido');
             return res.status(400).json({ error: 'ID de carrito o usuario no válido' });
         }
 
-        if (!userId || !userEmail) {
-            return res.status(400).json({ error: 'userId y userEmail son necesarios en el cuerpo de la solicitud' });
-        }
-
         const cart = await cartsModel.findById(cid).populate('products.product').populate('user').lean();
         if (!cart) {
             console.error('Carrito no encontrado');
             return res.status(404).json({ error: "Carrito no encontrado" });
-        }
-
-        if (!cart) {
-            return res.status(404).json({ error: 'Carrito no encontrado' });
         }
 
         if (cart.products.length === 0) {
@@ -189,8 +159,8 @@ export const purchaseCart = async (req, res) => {
         const ticket = await ticketService.createTicket({
             amount: totalAmount,
             purchase_datetime: new Date(),
-            purchaser: user.email,  
-            cartId: cart._id                 
+            purchaser: user.email,
+            cartId: cart._id
         });
 
         for (const item of cart.products) {
@@ -207,9 +177,80 @@ export const purchaseCart = async (req, res) => {
 
         await sendTicketEmail(ticket, user, productDetails);
 
-        res.status(201).json(ticket);
+        // res.status(201).json(ticket);
+
+        res.redirect(`/api/ticket/view/${ticket._id}`);
     } catch (error) {
         console.error('Error al finalizar la compra del carrito:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
+
+
+
+
+
+// export const purchaseCart = async (req, res) => {
+//     try {
+//         const { cid } = req.params;
+//         const { userId, userEmail } = req.body;  
+
+//         if (!mongoose.Types.ObjectId.isValid(cid) || !mongoose.Types.ObjectId.isValid(userId)) {
+//             console.error('ID de carrito o usuario no válido');
+//             return res.status(400).json({ error: 'ID de carrito o usuario no válido' });
+//         }
+
+//         if (!userId || !userEmail) {
+//             return res.status(400).json({ error: 'userId y userEmail son necesarios en el cuerpo de la solicitud' });
+//         }
+
+//         const cart = await cartsModel.findById(cid).populate('products.product').populate('user').lean();
+//         if (!cart) {
+//             console.error('Carrito no encontrado');
+//             return res.status(404).json({ error: "Carrito no encontrado" });
+//         }
+
+//         if (cart.products.length === 0) {
+//             return res.status(400).json({ error: 'El carrito está vacío' });
+//         }
+
+//         const user = await usersModel.findById(userId);
+//         if (!user) {
+//             console.error('Usuario no encontrado');
+//             return res.status(404).json({ error: 'Usuario no encontrado' });
+//         }
+
+//         const totalAmount = cart.products.reduce((total, item) => {
+//             if (!item.product || typeof item.product.price !== 'number' || typeof item.quantity !== 'number') {
+//                 throw new Error('Datos de carrito inválidos');
+//             }
+//             return total + (item.product.price * item.quantity);
+//         }, 0);
+
+//         const ticket = await ticketService.createTicket({
+//             amount: totalAmount,
+//             purchase_datetime: new Date(),
+//             purchaser: user.email,  
+//             cartId: cart._id                 
+//         });
+
+//         for (const item of cart.products) {
+//             await productsModel.findByIdAndUpdate(item.product._id, { $inc: { stock: -item.quantity } });
+//         }
+
+//         await cartsModel.findByIdAndUpdate(cid, { products: [], total: 0 });
+
+//         await usersModel.findByIdAndUpdate(userId, { cart: null });
+
+//         const productDetails = cart.products.map(product => 
+//             `Producto: ${product.product.title}\nCantidad: ${product.quantity}\nPrecio: $ ${product.product.price}\n`
+//         ).join('\n');
+
+//         await sendTicketEmail(ticket, user, productDetails);
+
+//         res.status(201).json(ticket);
+//     } catch (error) {
+//         console.error('Error al finalizar la compra del carrito:', error);
+//         res.status(500).json({ error: 'Error interno del servidor' });
+//     }
+// };

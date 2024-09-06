@@ -82,7 +82,6 @@ export const createTicket = async (req, res) => {
 
 export const renderTicket = async (req, res) => {
     const { tid } = req.params;
-    const { cid } = req.params;
 
     try {
         const ticket = await ticketsService.getTicketById(tid);
@@ -90,7 +89,11 @@ export const renderTicket = async (req, res) => {
             return res.status(404).render('error', { message: 'Ticket no encontrado' });
         }
 
-        const cart = await cartsModel.findById(cid).populate('products.product').populate('user').lean();
+        // Obtener el carrito asociado al ticket
+        const cart = await cartsModel.findById(ticket.cartId).populate('products.product').lean();
+        if (!cart) {
+            return res.status(404).render('error', { message: 'Carrito no encontrado' });
+        }
 
         console.log('Ticket:', ticket);
         console.log('Cart:', cart);
