@@ -45,54 +45,47 @@ export const loginUser = (req, res, next) => {
         if (err) {
         return next(err);
         }
-        // Verificar si el usuario tiene un carrito asociado
+
         if (!user.cart) {
             try {
-                // Crear un nuevo carrito para el usuario
                 const { message, cart } = await cartService.createCartForUser(user._id);
 
-                // Actualizar el usuario con el nuevo carrito
                 user.cart = cart._id;
                 await user.save();
 
-
-
-
-
-        req.session.user = {
-            _id: user._id,
-            first_name: user.first_name,
-            last_name: user.last_name,
-            email: user.email,
-            age: user.age,
-            cart: user.cart,
-            role: user.role,
-        };
-    } catch (error) {
-        console.error("Error al crear el carrito:", error);
-        return res.status(500).send({ status: "Error", error: "Error al crear el carrito" });
-    }
-} else {
-    req.session.user = {
-        _id: user._id,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.email,
-        age: user.age,
-        cart: user.cart,
-        role: user.role,
-    };
-}
-
-        if (user.role === 'admin') {
-            return res.redirect('/admin/products');
-        } else if (user.role === 'premium') {
-            return res.redirect('premium/products')
-        } else if (user.role === 'user') {
-            return res.redirect('/products');
-        } else {
-            return res.redirect('/not-authorized');
-        }
+                req.session.user = {
+                    _id: user._id,
+                    first_name: user.first_name,
+                    last_name: user.last_name,
+                    email: user.email,
+                    age: user.age,
+                    cart: user.cart,
+                    role: user.role,
+                    };
+                } catch (error) {
+                    console.error("Error al crear el carrito:", error);
+                    return res.status(500).send({ status: "Error", error: "Error al crear el carrito" });
+                }
+            } else {
+                req.session.user = {
+                    _id: user._id,
+                    first_name: user.first_name,
+                    last_name: user.last_name,
+                    email: user.email,
+                    age: user.age,
+                    cart: user.cart,
+                    role: user.role,
+                };
+            }
+            if (user.role === 'admin') {
+                return res.redirect('/admin/products');
+            } else if (user.role === 'premium') {
+                return res.redirect('premium/products')
+            } else if (user.role === 'user') {
+                return res.redirect('/products');
+            } else {
+                return res.redirect('/not-authorized');
+            }
         });
     })(req, res, next);
 };
@@ -123,9 +116,30 @@ export const getCurrentUser = (req, res) => {
     }
 };
 
-export const githubCallback = (req, res) => {
-    req.session.user = req.user;
-    res.redirect("/products");
+// export const githubCallback = (req, res) => {
+//     req.session.user = req.user;
+//     res.redirect("/products");
+// };
+
+export const githubCallback = async (req, res) => {
+    try {
+        const user = req.user;
+        req.session.user = user;
+
+        const { message, cart } = await cartService.createCartForUser(user._id);
+
+        user.cart = cart._id;
+        await user.save();
+
+        if (message === "Carrito creado correctamente") {
+            req.session.cartId = cart._id;
+        }
+
+        res.redirect("/products");
+    } catch (error) {
+        console.error("Error al procesar el callback de GitHub:", error);
+        res.status(500).send("Ocurrió un error al procesar el callback de GitHub");
+    }
 };
 
 export const forgotPassword = async (req, res) => {
