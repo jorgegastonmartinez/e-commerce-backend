@@ -17,7 +17,6 @@ const initializePassport = () => {
         try {
             let user = await userService.findOne({email:username})
                 if (user) {
-                    console.log("El usuario ya existe")
                     return done(null, false)
                 }
 
@@ -68,27 +67,29 @@ const initializePassport = () => {
 
     }, async(accessToken, refreshToken, profile, done) => {
         try {
-            let user = await userService.findOne({email: profile._json.email})
-            
+            const email = profile._json.email || "email@example.com";
+      
+            let user = await userService.findOne({ email });
+      
             if (!user) {
-                let newUser = {
-                    first_name: profile._json.name,
-                    last_name: "",
-                    age: "",
-                    email: profile._json.email,
-                    password: "",
-                    role: "user"
-                }
-                let result = await userService.create(newUser)
-                done(null, result)
+              let newUser = {
+                first_name: profile._json.name || "Unknown",
+                last_name: "",
+                age: "",
+                email,
+                password: "",
+                role: "user"
+              };
+              let result = await userService.create(newUser);
+              done(null, result);
             } else {
-                done(null, user)
+              done(null, user);
             }
-        } catch (error) {
-            return done(error)
+          } catch (error) {
+            return done(error);
+          }
         }
-    }
-))
+      ));
 
     passport.serializeUser((user, done) => {
         done(null, user._id)

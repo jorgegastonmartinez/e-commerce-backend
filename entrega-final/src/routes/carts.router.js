@@ -20,7 +20,6 @@ router.delete("/carts/:cid/products/:pid", removeProductFromCart);
 router.put("/carts/:cid", updateCart);
 router.put("/carts/:cid/products/:pid", updateProductQuantity);
 router.delete("/carts/:cid", clearCart);
-
 router.post("/carts/:cid/purchase", purchaseCart);
 
 export default router;
