@@ -1,12 +1,37 @@
 import User from '../dao/user/user.dao.js';
 import path from 'path';
+import UserDTO from '../dto/user.dto.js';
 
 const usersService = new User()
 
+// export const getUsers = async (req, res) => {
+//     let result = await usersService.getUsers();
+
+
+//     res.send({ status: "success", result })
+// }
+
+
 export const getUsers = async (req, res) => {
-    let result = await usersService.getUsers()
-    res.send({ status: "success", result })
+    try {
+        // Utiliza el servicio para obtener los usuarios
+        let users = await usersService.getUsers(); 
+
+        if (!users) {
+            return res.status(500).send({ error: "Error al obtener los usuarios" });
+        }
+
+        // Transforma cada usuario en un DTO
+        const usersDTO = users.map(user => new UserDTO(user));
+
+        // Renderiza la vista con los usuarios transformados
+        res.send({ status: "success", usersDTO })
+    } catch (error) {
+        console.error("Error al obtener los usuarios:", error);
+        return res.status(500).send({ error: "Error al obtener los usuarios" });
+    }
 }
+
 
 export const getUserById = async (req, res) => {
     try {
