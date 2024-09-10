@@ -64,4 +64,36 @@ export default class User {
             throw new Error("Ocurrió un error al actualizar la última conexión");
         }
     }
+
+    // nueva para el admin
+
+
+    deleteUser = async (id) => {
+        try {
+           return await usersModel.deleteOne({ _id: id });
+        } catch (error) {
+            console.error("Error en deleteUser:", error);
+            throw new Error("Error en deleteUser");
+        }
+    };
+
+
+    // nueva para change role
+    updateUserRole = async (userId, role) => {
+        try {
+            const user = await usersModel.findById(userId);
+
+            if (!user) {
+                throw new Error('Usuario no encontrado');
+            }
+
+            user.role = role;
+            await user.save();
+            return user;
+        } catch (error) {
+            console.error('Error al actualizar el rol del usuario:', error);
+            return null;
+        }
+    }
+
 }

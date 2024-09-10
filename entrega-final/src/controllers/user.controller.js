@@ -14,6 +14,12 @@ const usersService = new User()
 
 export const getUsers = async (req, res) => {
     try {
+
+    //       // Verificar si el usuario es admin
+    // if (req.session.user.role !== 'admin') {
+    //     return res.status(403).send('Acceso denegado. Solo el administrador puede acceder a esta página.');
+    // }
+
         // Utiliza el servicio para obtener los usuarios
         let users = await usersService.getUsers(); 
 
@@ -21,11 +27,12 @@ export const getUsers = async (req, res) => {
             return res.status(500).send({ error: "Error al obtener los usuarios" });
         }
 
-        // Transforma cada usuario en un DTO
-        const usersDTO = users.map(user => new UserDTO(user));
+         // Filtrar usuarios con rol 'user'
+    const usersDTO = users.map(user => new UserDTO(user));
 
-        // Renderiza la vista con los usuarios transformados
-        res.send({ status: "success", usersDTO })
+// Renderizar la vista de usuarios
+res.render('users', { users: usersDTO });
+
     } catch (error) {
         console.error("Error al obtener los usuarios:", error);
         return res.status(500).send({ error: "Error al obtener los usuarios" });
@@ -136,5 +143,70 @@ export const upgradeToPremium = async (req, res) => {
     } catch (error) {
         console.error('Error al actualizar el rol a premium:', error);
         res.status(500).json({ message: 'Error al actualizar el rol a premium', error });
+    }
+};
+
+
+// parte del admin
+//
+
+//
+
+export const getUsersAdmin = async (req, res) => {
+    try {
+        // // Verificar si el usuario es admin
+        // if (req.session.user.role !== 'admin') {
+        //     return res.status(403).send('Acceso denegado. Solo el administrador puede acceder a esta página.');
+        // }
+
+        // Obtener todos los usuarios
+        const users = await usersService.getUsers();
+
+         // Filtrar las propiedades necesarias
+         const propUsers = users.map(user => ({
+            first_name: user.first_name,
+            email: user.email,
+            role: user.role,
+            _id: user._id
+        }));
+
+         // Verifica que se obtuvieron usuarios
+         if (!users) {
+            return res.status(404).send('No se encontraron usuarios');
+        }
+
+
+        // Renderizar la vista de usuarios
+        res.render('admin-users', { users: propUsers });
+    } catch (error) {
+        console.error("Error al obtener los usuarios:", error);
+        res.status(500).send({ error: "Error al obtener los usuarios" });
+    }
+};
+
+
+
+export const deleteUser = async (req, res) => {
+    try {
+        let { uid } = req.params;
+
+        console.log('UID recibido:', uid);
+
+        // Verificar que el ID está presente
+        if (!uid) {
+            return res.status(400).send('ID del usuario no proporcionado');
+        }
+
+
+        const result = await usersService.deleteUser(uid);
+        
+        if (!result) {
+            return res.status(404).send('Usuario no encontrado');
+        }
+        
+        res.send('Usuario eliminado con éxito');
+    } catch (error) {
+        console.error("Error al eliminar el usuario:", error);
+        res.status(500).send({ error: "Error al eliminar el usuario" });
     }
 };

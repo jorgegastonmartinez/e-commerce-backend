@@ -1,13 +1,30 @@
 <h2>Vista para Administrador</h2>
 <p>Bienvenido {{user.first_name}}, eres un {{user.role}}.</p>
-
+<br/>
 <form action="/api/sessions/logout" method="POST">
     <button type="submit">Cerrar sesión</button>
 </form>
-
+<br/>
 <form action="/api/sessions/current" method="GET">
     <button type="submit">Ir al perfil</button>
 </form>
+<br/>
+
+
+
+
+<!-- Nuevo botón para ver todos los usuarios !!! -->
+<form action="/api/users" method="GET">
+    <button type="submit">Ver Todos los Usuarios</button>
+</form>
+
+<br/>
+
+<!-- Nuevo botón para ver todos los usuarios y poder editarlos!!! -->
+<form action="/api/admin/users" method="GET">
+    <button type="submit">Editar Usuarios</button>
+</form>
+
 
 <div>
     <h2>Mensajes de usuarios</h2>
