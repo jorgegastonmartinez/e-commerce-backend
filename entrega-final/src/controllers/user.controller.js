@@ -1,6 +1,7 @@
 import User from '../dao/user/user.dao.js';
 import path from 'path';
 import UserDTO from '../dto/user.dto.js';
+import { sendAccountDeletionEmail } from '../controllers/nodemailer.controller.js';
 
 const usersService = new User()
 
@@ -145,6 +146,93 @@ export const upgradeToPremium = async (req, res) => {
         res.status(500).json({ message: 'Error al actualizar el rol a premium', error });
     }
 };
+
+// // DELETE USERS CUANDO TIENEN LA INACTIVIDAD
+// export const deleteInactiveUsers = async (req, res) => {
+//     const twoDaysAgo = new Date();
+//     twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+
+//     try {
+//          // Encuentra y elimina usuarios cuya última conexión sea anterior a twoDaysAgo
+
+//          const result = await usersService.deleteInactiveUsers({
+//             last_connection: { $lt: twoDaysAgo}
+//          });
+
+//          if (result.deletedCount === 0) {
+//             return res.status(404).json({ message: 'No se encontraron usuarios inactivos'})
+//          }
+
+//          res.status(200).json({ message: `${result.deletedCount} Usuarios inactivos eliminados`})
+//     } catch (error) {
+//         res.status(500).json({ message: 'Error al eliminar usuarios inactivos', error });
+//     }
+// }
+
+
+// // DELETE USERS CUANDO TIENEN LA INACTIVIDAD
+// export const deleteInactiveUsers = async (req, res) => {
+//     const twoDaysAgo = new Date();
+//     twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+
+//     try {
+//         const { deletedCount, deletedUsers } = await usersService.deleteInactiveUsers({
+//             last_connection: { $lt: twoDaysAgo }
+//         });
+
+//         if (deletedCount === 0) {
+//             return res.status(404).json({ message: 'No se encontraron usuarios inactivos para eliminar' });
+//         }
+
+//         res.status(200).json({
+//             message: `${deletedCount} usuarios inactivos eliminados`,
+//             users: deletedUsers.map(user => ({
+//                 id: user._id,
+//                 email: user.email,
+//                 last_connection: user.last_connection
+//             }))
+//         });
+//     } catch (error) {
+//         res.status(500).json({ message: 'Error al eliminar usuarios inactivos', error });
+//     }
+// };
+
+// DELETE USERS CUANDO TIENEN LA INACTIVIDAD
+export const deleteInactiveUsers = async (req, res) => {
+    const twoDaysAgo = new Date();
+    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+
+    try {
+        const { deletedCount, deletedUsers } = await usersService.deleteInactiveUsers({
+            last_connection: { $lt: twoDaysAgo }
+        });
+
+        if (deletedCount === 0) {
+            return res.status(404).json({ message: 'No se encontraron usuarios inactivos para eliminar' });
+        }
+
+          // Envía un correo a cada usuario eliminado
+          for (const user of deletedUsers) {
+            try {
+                await sendAccountDeletionEmail(user);
+            } catch (emailError) {
+                console.error(`Error al enviar el correo de eliminación para el usuario ${user.email}:`, emailError);
+            }
+        }
+
+        res.status(200).json({
+            message: `${deletedCount} usuarios inactivos eliminados`,
+            users: deletedUsers.map(user => ({
+                id: user._id,
+                email: user.email,
+                last_connection: user.last_connection
+            }))
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al eliminar usuarios inactivos', error });
+    }
+};
+
 
 
 // parte del admin

@@ -19,8 +19,13 @@ npm start
 
 ## Instrucciones de uso
 
-Descargue el proyecto, desde GitHub, con el comando git clone. Dentro del package.json modifique el  "start": "node --watch cuarta_practica_integradora/src/app.js". 
+Descargue el proyecto, desde GitHub, con el comando git clone. Dentro del package.json modifique el  "start": "node --watch entrega-final/src/app.js". 
 Corra la app con el comando npm start.
+
+
+Credenciales para el Admin
+mail: adminCoder@coder.com
+contraseña: adminCod3r123
 
 ## Imagenes del proyecto
 

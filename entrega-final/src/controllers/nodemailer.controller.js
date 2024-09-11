@@ -15,7 +15,8 @@ const transport = nodemailer.createTransport({
 export const sendTicketEmail = async (ticket, user, productDetails) => {
     const mailOptions = {
         from: process.env.EMAIL_USER,
-        to: "jorge_gmartinez@hotmail.com",
+        // to: "jorge_gmartinez@hotmail.com",
+        to: user.email,
         subject: "Detalles de tu compra",
         html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
@@ -49,5 +50,29 @@ export const sendTicketEmail = async (ticket, user, productDetails) => {
         console.log('Correo enviado exitosamente');
     } catch (error) {
         console.error('Error al enviar el correo', error);
+    }
+}
+
+// Función para enviar el correo de eliminación de cuenta
+export const sendAccountDeletionEmail = async (user) => {
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: user.email,
+        subject: "Notificación de Eliminación de Cuenta",
+        html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+                <h1 style="color: #333;">Notificación de Eliminación de Cuenta</h1>
+                <p style="font-size: 16px;">Hola <strong>${user.first_name}</strong>,</p>
+                <p style="font-size: 16px;">Lamentamos informarte que tu cuenta ha sido eliminada debido a inactividad prolongada.</p>
+                <p style="font-size: 16px;">Si crees que esto es un error o si deseas reactivar tu cuenta, por favor contacta a nuestro soporte.</p>
+                <p style="font-size: 16px;">Gracias por usar nuestro servicio.</p>
+            </div>
+        `,
+    };
+    try {
+        await transport.sendMail(mailOptions);
+        console.log('Correo de eliminación de cuenta enviado exitosamente');
+    } catch (error) {
+        console.error('Error al enviar el correo de eliminación de cuenta', error);
     }
 }

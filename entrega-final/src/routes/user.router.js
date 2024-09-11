@@ -8,7 +8,8 @@ import {
   uploadDocuments,
   updateLastConnection,
   updateUser,
-  upgradeToPremium
+  upgradeToPremium,
+  deleteInactiveUsers
 } from "../controllers/user.controller.js";
 
 import {
@@ -33,5 +34,8 @@ router.delete("/premium/products/:pid", isAuthenticated, isPremium, deleteProduc
 router.post('/:uid/documents', upload.array('documents'), uploadDocuments);
 router.put('/:uid/last-connection', updateLastConnection);
 router.put('/premium/:uid', upgradeToPremium);
+
+// DELETE LAST CONNECTION
+router.delete('/inactive', deleteInactiveUsers);
 
 export default router;

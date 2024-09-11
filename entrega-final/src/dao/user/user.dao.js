@@ -65,6 +65,26 @@ export default class User {
         }
     }
 
+    // DELETE INACTIVE USER
+
+    deleteInactiveUsers = async (condition) => {
+        try {
+            // Obtener los usuarios que coinciden con la condición
+            const inactiveUsers = await usersModel.find(condition);
+
+            // Si no hay usuarios inactivos, no se necesita eliminar
+            if (inactiveUsers.length === 0) {
+                return { deletedCount: 0, deletedUsers: [] };
+            }
+            const result = await usersModel.deleteMany(condition);
+            
+            return { deletedCount: result.deletedCount, deletedUsers: inactiveUsers };
+        } catch (error) {
+            console.log(error);
+            return null;
+        }
+    }
+
     // nueva para el admin
 
 
