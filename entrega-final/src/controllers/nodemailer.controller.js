@@ -15,7 +15,6 @@ const transport = nodemailer.createTransport({
 export const sendTicketEmail = async (ticket, user, productDetails) => {
     const mailOptions = {
         from: process.env.EMAIL_USER,
-        // to: "jorge_gmartinez@hotmail.com",
         to: user.email,
         subject: "Detalles de tu compra",
         html: `
@@ -53,7 +52,6 @@ export const sendTicketEmail = async (ticket, user, productDetails) => {
     }
 }
 
-// Función para enviar el correo de eliminación de cuenta
 export const sendAccountDeletionEmail = async (user) => {
     const mailOptions = {
         from: process.env.EMAIL_USER,
@@ -86,7 +84,7 @@ export const sendProductDeletionEmail = async (user, product) => {
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
                 <h1 style="color: #333;">Notificación de Eliminación de Producto</h1>
                 <p style="font-size: 16px;">Hola <strong>${user.first_name}</strong>,</p>
-                <p style="font-size: 16px;">Lamentamos informarte que tu producto "${product.title}" ha sido eliminado del sistema.</p>
+                <p style="font-size: 16px;">Lamentamos informarte que tu producto "${product.title}" ha sido eliminado del sistema e-commerce.</p>
                 <p style="font-size: 16px;">Si crees que esto es un error, por favor contacta a nuestro soporte.</p>
                 <p style="font-size: 16px;">Gracias por usar nuestro servicio.</p>
             </div>
