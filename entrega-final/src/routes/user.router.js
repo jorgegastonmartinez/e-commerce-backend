@@ -12,15 +12,12 @@ import {
 
 const router = Router();
 
-router.get("/users/", getUsers);
-router.get("/users/:uid", getUserById)
-router.post("/users/", saveUser)
+router.get('/users/', getUsers);
+router.get('/users/:uid', getUserById)
+router.post('/users/', saveUser)
 router.put('/users/:uid', updateUser);
-
 router.post('/users/:uid/documents', upload.array('documents'), uploadDocuments);
 router.put('/users/:uid/last-connection', updateLastConnection);
-
-// DELETE LAST CONNECTION
 router.delete('/users/inactive', deleteInactiveUsers);
 
 export default router;

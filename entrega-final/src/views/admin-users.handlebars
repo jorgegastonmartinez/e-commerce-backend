@@ -1,34 +1,3 @@
-{{!-- <h1>Editar Usuarios</h1>
-<table>
-    <thead>
-        <tr>
-            <th>Nombre</th>
-            <th>Email</th>
-            <th>Rol</th>
-            <th>Acción</th>
-        </tr>
-    </thead>
-    <tbody>
-        {{#each users}}
-        <tr>
-            <td>{{this.first_name}}</td>
-            <td>{{this.email}}</td>
-            <td>{{this.role}}</td>
-            <td>
-                <form class="delete-user-form" data-user-id="{{this._id}}">
-                    <button type="submit">Eliminar Usuario</button>
-                </form>
-            </td>
-        </tr>
-        {{/each}}
-    </tbody>
-</table> --}}
-
-
-
-
-
-
 <h1>Editar Usuarios</h1>
 <table>
     <thead>
@@ -46,9 +15,8 @@
             <td>{{this.first_name}}</td>
             <td>{{this.email}}</td>
             <td>{{this.role}}</td>
-            
+
             <td>
-                <!-- Formulario para cambiar el rol del usuario -->
                 <form class="change-role-form" data-user-id="{{this._id}}">
                     <button type="button" class="change-role-btn" data-role="premium">Cambiar a Premium</button>
                     <button type="button" class="change-role-btn" data-role="user">Cambiar a User</button>
@@ -56,7 +24,6 @@
             </td>
 
             <td>
-                <!-- Formulario para eliminar usuario -->
                 <form class="delete-user-form" data-user-id="{{this._id}}">
                     <button type="submit">Eliminar Usuario</button>
                 </form>
@@ -65,8 +32,8 @@
         {{/each}}
     </tbody>
 </table>
-
-<a href="/admin/products">Volver a Productos</a>
+<br />
+<a href="/admin/products">Volver a la página principal</a>
 
 <script>
     document.querySelectorAll('.delete-user-form').forEach(form => {
@@ -80,11 +47,10 @@
                 return;
             }
 
-            // Confirmación antes de eliminar
-        const confirmDelete = confirm('¿Estás seguro de que deseas eliminar este usuario?');
-        if (!confirmDelete) {
-            return;  // Si el usuario cancela, no continúa con la eliminación
-        }
+            const confirmDelete = confirm('¿Estás seguro de que deseas eliminar este usuario?');
+            if (!confirmDelete) {
+                return;
+            }
 
             try {
                 const response = await fetch(`/api/admin/users/${userId}`, {
@@ -100,7 +66,7 @@
                 }
 
                 alert('Usuario eliminado con éxito');
-                window.location.reload();  
+                window.location.reload();
 
             } catch (error) {
                 console.error('Error:', error);
@@ -120,7 +86,6 @@
                 alert('No se pudo encontrar el ID del usuario o el rol.');
                 return;
             }
-
             try {
                 const response = await fetch(`/api/admin/users/change-role`, {
                     method: 'POST',
@@ -136,7 +101,7 @@
                 }
 
                 alert('Rol del usuario actualizado con éxito');
-                window.location.reload();  
+                window.location.reload();
 
             } catch (error) {
                 console.error('Error:', error);

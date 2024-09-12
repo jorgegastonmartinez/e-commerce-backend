@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 import productModel from "../models/product.model.js";
 import messageModel from '../models/message.model.js';
 import cartModel from "../models/cart.model.js";
@@ -19,13 +19,8 @@ export const renderProducts = async (req, res) => {
     : '';
     result.isValid = !(page <= 0 || page > result.totalPages);
 
-
     const user = req.session.user;
-    // const cartId = req.session.cartId || user.cartId;
-
     const cartId = user ? user.cart : null;
-
-    console.log("Cart ID:", cartId);  // Verifica que este log muestra el cartId correctamente
 
     res.render("products", { ...result, user, cartId});
 };
@@ -35,9 +30,6 @@ export const renderCart = async (req, res) => {
     const { cid } = req.params;
 
     try {
-        console.log("Carrito ID recibido:", cid);
-
-        // Obtener el carrito desde la base de datos
         const cart = await cartModel.findById(cid).populate('products.product').lean();  
 
         if (!cart) {
@@ -45,7 +37,6 @@ export const renderCart = async (req, res) => {
             return res.status(404).json({ error: "Carrito no encontrado" });
         }
 
-        // Obtener el usuario desde la sesión
         const user = req.session.user;
 
         if (!user) {
@@ -53,14 +44,12 @@ export const renderCart = async (req, res) => {
             return res.status(404).json({ error: "Usuario no encontrado" });
         }
 
-        // Renderizar la vista 'carts' con los productos del carrito y el usuario
         res.render("carts", { cart, user });
     } catch (error) {
         console.error("Error al obtener el carrito:", error);
         return res.status(500).json({ error: "Error al obtener el carrito" });
     }
 };
-
 
 export const renderLoginPage = (req, res) => {
     res.render("login");
@@ -92,15 +81,15 @@ export const getProductsForAdmin = async (req, res) => {
 export const deleteMessage = async (req, res) => {
     try {
         const { mid } = req.params;
+
         await messageModel.findByIdAndDelete(mid);
+
         res.status(200).send('Mensaje eliminado');
     } catch (error) {
         res.status(500).send(error.message);
     }
 };
 
-
-// PREMIUM!!!!!
 export const renderProductsPremium = async (req, res) => {
     let page = parseInt(req.query.page);
     if (!page) page = 1;
@@ -117,9 +106,6 @@ export const renderProductsPremium = async (req, res) => {
     const user = req.session.user;
     const cartId = user ? user.cart : null;
 
-    console.log("Cart ID:", cartId);  // Verifica que este log muestra el cartId correctamente
-
-    // Renderiza la vista específica para usuarios premium
     res.render("productsPremium", { ...result, user, cartId });
 };
 
@@ -127,17 +113,12 @@ export const renderCartPremium = async (req, res) => {
     const { cid } = req.params;
 
     try {
-        console.log("Carrito ID recibido:", cid);
-
-        // Obtener el carrito desde la base de datos
         const cart = await cartModel.findById(cid).populate('products.product').lean();  
 
         if (!cart) {
             console.error("Carrito no encontrado para el ID:", cid);
             return res.status(404).json({ error: "Carrito no encontrado" });
         }
-
-        // Obtener el usuario desde la sesión
         const user = req.session.user;
 
         if (!user) {
@@ -145,18 +126,12 @@ export const renderCartPremium = async (req, res) => {
             return res.status(404).json({ error: "Usuario no encontrado" });
         }
 
-        // Renderizar la vista 'cartsPremium' con los productos del carrito y el usuario
         res.render("cartsPremium", { cart, user });
     } catch (error) {
         console.error("Error al obtener el carrito:", error);
         return res.status(500).json({ error: "Error al obtener el carrito" });
     }
 };
-
-
-
-
-
 
 export const showCreateProductPage = (req, res) => {
     try {

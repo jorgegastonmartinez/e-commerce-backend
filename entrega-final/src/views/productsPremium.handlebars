@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 </head>
+
 <body>
     <div>
         <h2>Bienvenido al ecommerce de la Chocolatería San Ginés</h2>
-            <p>Nombre: {{user.first_name}} </p>
-            <p>Email: {{user.email}} </p>
-            <p>Role: {{user.role}} </p>
+        <p>Nombre: {{user.first_name}} </p>
+        <p>Email: {{user.email}} </p>
+        <p>Role: {{user.role}} </p>
         <form action="/api/sessions/logout" method="POST">
             <button type="submit">Cerrar sesión</button>
         </form>
@@ -20,56 +22,54 @@
             <button type="submit">Ver Carrito</button>
         </form>
 
-    <div>
-        <h2>Realizar consulta</h2>
         <div>
-            <input type="text" id="messageInput" placeholder="Ingrese un mensaje">
-            <button id="sendMessageButton">Enviar</button>
+            <h2>Realizar consulta</h2>
+            <div>
+                <input type="text" id="messageInput" placeholder="Ingrese un mensaje">
+                <button id="sendMessageButton">Enviar</button>
+            </div>
         </div>
+
+        <div>
+            <h2>Crear Nuevo Producto</h2>
+            <form action="/create-product" method="GET">
+                <button type="submit">Crear Producto</button>
+            </form>
+        </div>
+
+        {{#if isValid}}
+        <div>
+            {{#each docs}}
+            <div>
+                <h2>Producto: {{this.title}} &nbsp; descripcion: {{this.description}}</h2>
+                <h4>Precio: {{this.price}} &nbsp; Stock: {{this.stock}}</h4>
+                <form class="add-to-cart-form" data-product-id="{{this._id}}">
+                    <button type="submit">Add to Cart</button>
+                </form>
+            </div>
+            <br>
+            {{/each}}
+        </div>
+        <br>
+        <div>
+            {{#if hasPrevPage}}
+            <a href={{this.prevLink}}>
+                << Anterior</a>
+                    {{/if}}
+                    &nbsp;
+                    {{this.page}}
+                    &nbsp;
+                    {{#if hasNextPage}}
+                    <a href={{this.nextLink}}>Siguiente >></a>
+                    {{/if}}
+        </div>
+        {{else}}
+        <h1>No hay productos disponibles</h1>
+        {{/if}}
     </div>
-
-      <div>
-        <h2>Crear un nuevo producto</h2>
-        <form action="/create-product" method="GET">
-            <button type="submit">Ir a la página de creación</button>
-        </form>
-    </div>
-
-
-
-
-{{#if isValid}}
-<div>
-    {{#each docs}}
-    <div>
-        <h2>Producto: {{this.title}} &nbsp; descripcion: {{this.description}}</h2>
-        <h4>Precio: {{this.price}} &nbsp; Stock: {{this.stock}}</h4>
-        <form class="add-to-cart-form" data-product-id="{{this._id}}">
-            <button type="submit">Add to Cart</button>
-        </form>
-    </div>
-    <br>
-    {{/each}}
-</div>
-<br>
-<div>
-    {{#if hasPrevPage}}
-    <a href={{this.prevLink}}><< Anterior</a>
-    {{/if}}
-    &nbsp;
-    {{this.page}}
-    &nbsp;
-    {{#if hasNextPage}}
-        <a href={{this.nextLink}}>Siguiente >></a>
-    {{/if}} 
-</div>
-{{else}}
-<h1>No hay productos disponibles</h1>
-{{/if}}
-</div>
 
     <script src="/socket.io/socket.io.js"></script>
-    
+
     <script>
         const socket = io();
         document.getElementById('sendMessageButton').addEventListener('click', async () => {
@@ -97,47 +97,47 @@
             }
         });
 
-        socket.on('chat message', function(msg) {
+        socket.on('chat message', function (msg) {
             const item = document.createElement('li');
-            item.textContent = `${msg.user.first_name}: ${msg.message}`;  
+            item.textContent = `${msg.user.first_name}: ${msg.message}`;
             document.getElementById('messageList').appendChild(item);
             window.scrollTo(0, document.body.scrollHeight);
         });
     </script>
 
     <script>
-    document.querySelectorAll('.add-to-cart-form').forEach(form => {
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const productId = form.getAttribute('data-product-id');
-            
-            try {
-                const cartResponse = await fetch('/api/carts', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                if (!cartResponse.ok) {
-                    const errorText = await cartResponse.text();
-                    throw new Error(errorText);
-                }
-                const cartResult = await cartResponse.json();
-                const cartId = cartResult.cart._id;
-                
-                const response = await fetch(`/api/carts/${cartId}/products/${productId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ quantity: 1 })
-                });
+        document.querySelectorAll('.add-to-cart-form').forEach(form => {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const productId = form.getAttribute('data-product-id');
 
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(errorText);
-                }
+                try {
+                    const cartResponse = await fetch('/api/carts', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (!cartResponse.ok) {
+                        const errorText = await cartResponse.text();
+                        throw new Error(errorText);
+                    }
+                    const cartResult = await cartResponse.json();
+                    const cartId = cartResult.cart._id;
+
+                    const response = await fetch(`/api/carts/${cartId}/products/${productId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ quantity: 1 })
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(errorText);
+                    }
                     alert('Producto agregado al carrito');
                 } catch (error) {
                     console.error('Error:', error);
@@ -147,4 +147,5 @@
         });
     </script>
 </body>
+
 </html>

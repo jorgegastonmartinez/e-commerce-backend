@@ -5,8 +5,8 @@ import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
-
 import CartDAO from '../dao/cart/cart.dao.js';
+
 const cartService = new CartDAO();
 
 dotenv.config();
@@ -107,7 +107,6 @@ export const getCurrentUser = (req, res) => {
         return res.redirect("/login");
     }
     const userDTO = new UserDTO(req.session.user);
-    console.log(userDTO); 
     
     res.render('current', { user: userDTO, isAdmin: req.session.user.role === 'admin', isPremium: req.session.user.role === 'premium' });
     } catch (error) {
@@ -139,7 +138,6 @@ export const githubCallback = async (req, res) => {
 
 export const forgotPassword = async (req, res) => {
     const { email } = req.body;
-
     const user = await User.findOne({ email });
 
     if (!user) {

@@ -1,35 +1,21 @@
 import mongoose from 'mongoose';
-import User from '../dao/user/user.dao.js';
+import UserDAO from '../dao/user/user.dao.js';
 import path from 'path';
 import UserDTO from '../dto/user.dto.js';
 import { sendAccountDeletionEmail } from '../controllers/nodemailer.controller.js';
 
-const usersService = new User()
-
-// export const getUsers = async (req, res) => {
-//     let result = await usersService.getUsers();
-
-
-//     res.send({ status: "success", result })
-// }
-
+const userService = new UserDAO()
 
 export const getUsers = async (req, res) => {
     try {
-
-
-        // Utiliza el servicio para obtener los usuarios
-        let users = await usersService.getUsers(); 
+        let users = await userService.getUsers();
 
         if (!users) {
             return res.status(500).send({ error: "Error al obtener los usuarios" });
         }
+        const usersDTO = users.map(user => new UserDTO(user));
 
-         // Filtrar usuarios con rol 'user'
-    const usersDTO = users.map(user => new UserDTO(user));
-
-// Renderizar la vista de usuarios
-res.render('users', { users: usersDTO });
+        res.render('users', { users: usersDTO });
 
     } catch (error) {
         console.error("Error al obtener los usuarios:", error);
@@ -37,22 +23,19 @@ res.render('users', { users: usersDTO });
     }
 }
 
-
 export const getUserById = async (req, res) => {
     try {
         const { uid } = req.params;
 
- // Validar que uid sea un ObjectId válido
- if (!mongoose.Types.ObjectId.isValid(uid)) {
-    return res.status(400).send({ status: "error", message: "Invalid user ID" });
-}
+        if (!mongoose.Types.ObjectId.isValid(uid)) {
+            return res.status(400).send({ status: "error", message: "Invalid user ID" });
+        }
 
-
-
-        const user = await usersService.getUserById(uid);
+        const user = await userService.getUserById(uid);
         if (!user) {
             return res.status(404).send({ status: "error", message: "User not found" });
         }
+
         res.send({ status: "success", result: user });
     } catch (error) {
         console.error("Error al obtener el usuario:", error);
@@ -63,11 +46,14 @@ export const getUserById = async (req, res) => {
 export const updateUser = async (req, res) => {
     const { uid } = req.params;
     const updatedData = req.body;
+
     try {
-        const result = await usersService.updateUser(uid, updatedData);
+        const result = await userService.updateUser(uid, updatedData);
+
         if (result.nModified === 0) {
             return res.status(404).json({ message: 'Usuario no encontrado o los datos no cambiaron' });
         }
+
         res.status(200).json({ message: 'Usuario actualizado exitosamente.' });
     } catch (error) {
         res.status(500).json({ message: 'Error al actualizar el usuario.', error });
@@ -76,7 +62,8 @@ export const updateUser = async (req, res) => {
 
 export const saveUser = async (req, res) => {
     const user = req.body
-    let result = await usersService.saveUser(user)
+    let result = await userService.saveUser(user);
+
     res.send({ status: "success", result })
 };
 
@@ -94,12 +81,12 @@ export const uploadDocuments = async (req, res) => {
     }));
 
     try {
-        const user = await usersService.getUserById(uid);
+        const user = await userService.getUserById(uid);
         if (!user) {
             return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
 
-        await usersService.addDocuments(uid, documentData);
+        await userService.addDocuments(uid, documentData);
 
         res.status(200).json({ message: 'Documentos subidos correctamente', documents: documentData });
     } catch (error) {
@@ -112,10 +99,12 @@ export const updateLastConnection = async (req, res) => {
     const date = new Date();
 
     try {
-        const result = await usersService.updateLastConnection(uid, date);
+        const result = await userService.updateLastConnection(uid, date);
+        
         if (result.nModified === 0) {
             return res.status(404).json({ message: 'Usuario no encontrado o la conexión no cambió' });
         }
+
         res.status(200).json({ message: 'Última conexión actualizada exitosamente' });
     } catch (error) {
         res.status(500).json({ message: 'Error al actualizar la última conexión', error });
@@ -126,7 +115,7 @@ export const upgradeToPremium = async (req, res) => {
     const { uid } = req.params;
 
     try {
-        const user = await usersService.getUserById(uid);
+        const user = await userService.getUserById(uid);
         if (!user) {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
@@ -143,7 +132,7 @@ export const upgradeToPremium = async (req, res) => {
             return res.status(400).json({ message: 'Faltan subir documentos requeridos', missingDocuments });
         }
         user.role = 'premium';
-        await usersService.updateUser(uid, user);
+        await userService.updateUser(uid, user);
 
         res.status(200).json({ message: 'El rol del usuario se ha actualizado a premium' });
     } catch (error) {
@@ -152,63 +141,12 @@ export const upgradeToPremium = async (req, res) => {
     }
 };
 
-// // DELETE USERS CUANDO TIENEN LA INACTIVIDAD
-// export const deleteInactiveUsers = async (req, res) => {
-//     const twoDaysAgo = new Date();
-//     twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
-
-//     try {
-//          // Encuentra y elimina usuarios cuya última conexión sea anterior a twoDaysAgo
-
-//          const result = await usersService.deleteInactiveUsers({
-//             last_connection: { $lt: twoDaysAgo}
-//          });
-
-//          if (result.deletedCount === 0) {
-//             return res.status(404).json({ message: 'No se encontraron usuarios inactivos'})
-//          }
-
-//          res.status(200).json({ message: `${result.deletedCount} Usuarios inactivos eliminados`})
-//     } catch (error) {
-//         res.status(500).json({ message: 'Error al eliminar usuarios inactivos', error });
-//     }
-// }
-
-
-// // DELETE USERS CUANDO TIENEN LA INACTIVIDAD
-// export const deleteInactiveUsers = async (req, res) => {
-//     const twoDaysAgo = new Date();
-//     twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
-
-//     try {
-//         const { deletedCount, deletedUsers } = await usersService.deleteInactiveUsers({
-//             last_connection: { $lt: twoDaysAgo }
-//         });
-
-//         if (deletedCount === 0) {
-//             return res.status(404).json({ message: 'No se encontraron usuarios inactivos para eliminar' });
-//         }
-
-//         res.status(200).json({
-//             message: `${deletedCount} usuarios inactivos eliminados`,
-//             users: deletedUsers.map(user => ({
-//                 id: user._id,
-//                 email: user.email,
-//                 last_connection: user.last_connection
-//             }))
-//         });
-//     } catch (error) {
-//         res.status(500).json({ message: 'Error al eliminar usuarios inactivos', error });
-//     }
-// };
-
-// DELETE USERS CUANDO TIENEN LA INACTIVIDAD
 export const deleteInactiveUsers = async (req, res) => {
     const twoDaysAgo = new Date();
     twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
 
     try {
-        const { deletedCount, deletedUsers } = await usersService.deleteInactiveUsers({
+        const { deletedCount, deletedUsers } = await userService.deleteInactiveUsers({
             last_connection: { $lt: twoDaysAgo }
         });
 
@@ -216,8 +154,7 @@ export const deleteInactiveUsers = async (req, res) => {
             return res.status(404).json({ message: 'No se encontraron usuarios inactivos para eliminar' });
         }
 
-          // Envía un correo a cada usuario eliminado
-          for (const user of deletedUsers) {
+        for (const user of deletedUsers) {
             try {
                 await sendAccountDeletionEmail(user);
             } catch (emailError) {
@@ -238,38 +175,20 @@ export const deleteInactiveUsers = async (req, res) => {
     }
 };
 
-
-
-// parte del admin
-//
-
-//
-
 export const getUsersAdmin = async (req, res) => {
     try {
-        // // Verificar si el usuario es admin
-        // if (req.session.user.role !== 'admin') {
-        //     return res.status(403).send('Acceso denegado. Solo el administrador puede acceder a esta página.');
-        // }
-
-        // Obtener todos los usuarios
-        const users = await usersService.getUsers();
-
-         // Filtrar las propiedades necesarias
-         const propUsers = users.map(user => ({
+        const users = await userService.getUsers();
+        const propUsers = users.map(user => ({
             first_name: user.first_name,
             email: user.email,
             role: user.role,
             _id: user._id
         }));
 
-         // Verifica que se obtuvieron usuarios
-         if (!users) {
+        if (!users) {
             return res.status(404).send('No se encontraron usuarios');
         }
 
-
-        // Renderizar la vista de usuarios
         res.render('admin-users', { users: propUsers });
     } catch (error) {
         console.error("Error al obtener los usuarios:", error);
@@ -277,21 +196,14 @@ export const getUsersAdmin = async (req, res) => {
     }
 };
 
-
-
 export const deleteUser = async (req, res) => {
     try {
         let { uid } = req.params;
 
-        console.log('UID recibido:', uid);
-
-        // Verificar que el ID está presente
         if (!uid) {
             return res.status(400).send('ID del usuario no proporcionado');
         }
-
-
-        const result = await usersService.deleteUser(uid);
+        const result = await userService.deleteUser(uid);
         
         if (!result) {
             return res.status(404).send('Usuario no encontrado');

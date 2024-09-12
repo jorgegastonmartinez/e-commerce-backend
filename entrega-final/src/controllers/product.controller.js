@@ -1,11 +1,10 @@
 import ProductDAO from '../dao/product/product.dao.js';
 import { sendProductDeletionEmail } from './nodemailer.controller.js';
-import User from '../dao/user/user.dao.js';
+import UserDAO from '../dao/user/user.dao.js';
 
 // import UserDTO from '../dto/user.dto.js';
 
-const usersService = new User()
-const productDAO = new ProductDAO();
+const usersService = new UserDAO()
 const productService = new ProductDAO();
 
 export const getProducts = async (req, res) => {
@@ -29,7 +28,7 @@ export const getProducts = async (req, res) => {
             sortOptions.price = sort === "asc" ? 1 : -1;
         }
 
-        const { products, totalProducts } = await productDAO.getProducts(filter, sortOptions, limit, page); ///////
+        const { products, totalProducts } = await productService.getProducts(filter, sortOptions, limit, page); ///////
         const totalPages = Math.ceil(totalProducts / limit);
 
         const response = {
@@ -55,7 +54,7 @@ export const getProducts = async (req, res) => {
 export const getProductById = async (req, res) => {
     try {
         let { pid } = req.params;
-        const product = await productDAO.getProductById(pid); ///
+        const product = await productService.getProductById(pid);
         if (!product) {
             return res.status(400).send({ error: "Producto no encontrado" });
         }
@@ -69,20 +68,6 @@ export const getProductById = async (req, res) => {
 
 export const createProduct = async (req, res) => {
     let { title, description, code, price, stock, category } = req.body;
-    // const { userId } = req.session;
-
-    // if (!userId) {
-    //     return res.status(400).send({ status: "error", message: "User ID is required" });
-    // }
-
-
-    // const { userId } = req.session.user || {}; // Asegúrate de que userId esté presente
-
-    // if (!userId) {
-    //     console.log("No userId found in session");
-    //     return res.status(400).send({ status: "error", message: "User ID is required" });
-    // }
-
     const userId = req.session.user?._id;
 
     if (!title || !description || !code || !price || isNaN(stock) || !category) {
@@ -95,14 +80,14 @@ export const createProduct = async (req, res) => {
     }
 
     try {
-        const codeExists = await productDAO.existsByCode(code); //
+        const codeExists = await productService.existsByCode(code);
 
         if (codeExists) {
             console.log("El campo code ya existe con ese número");
             return res.status(400).send({ error: "El campo code ya existe con ese número" });
         }
 
-        const result = await productDAO.createProduct({    /////
+        const result = await productService.createProduct({
             title,
             description,
             code,
@@ -129,18 +114,18 @@ export const updateProduct = async (req, res) => {
     }
 
     try {
-        const product = await productDAO.getProductById(pid);   //
+        const product = await productService.getProductById(pid);
         if (!product) {
             return res.status(400).send({ error: "Producto no encontrado" });
         }
 
-        const codeExists = await productDAO.existsByCode(productToUpdate.code, pid);    //
+        const codeExists = await productService.existsByCode(productToUpdate.code, pid);
 
         if (codeExists) {
             return res.status(400).send({ error: "El campo code ya está siendo utilizado por otro producto" });
         }
 
-        const result = await productDAO.updateProduct(pid, productToUpdate);    //
+        const result = await productService.updateProduct(pid, productToUpdate);
 
         res.send({ result: "success", message: "Producto creado exitosamente", payload: result });
     } catch (error) {
@@ -153,7 +138,7 @@ export const deleteProduct = async (req, res) => {
     try {
         let { pid } = req.params;
 
-        const product = await productDAO.getProductById(pid);   //
+        const product = await productService.getProductById(pid);
         if (!product) {
             return res.status(404).send({ status: "error", message: "Product not found" });
         }
@@ -163,7 +148,7 @@ export const deleteProduct = async (req, res) => {
             await sendProductDeletionEmail(user, product);
         }
 
-        await productDAO.deleteProduct(pid);    //
+        await productService.deleteProduct(pid);
 
         res.send({ result: "success", payload: { deletedCount: 1 } });
     } catch (error) {

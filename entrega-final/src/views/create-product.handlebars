@@ -6,34 +6,35 @@
 </head>
 <body>
     <h1>Crear un nuevo producto</h1>
+    <br />
     <form id="createProductForm" action="/api/premium/products" method="POST">
         <label for="title">Título:</label>
         <input type="text" id="title" name="title" required><br>
-
+        <br />
         <label for="description">Descripción:</label>
         <input type="text" id="description" name="description" required><br>
-
+        <br />
         <label for="code">Código:</label>
         <input type="text" id="code" name="code" required><br>
-
+        <br />
         <label for="price">Precio:</label>
         <input type="number" id="price" name="price" step="0.01" required><br>
-
+        <br />
         <label for="stock">Stock:</label>
         <input type="number" id="stock" name="stock" required><br>
-
+        <br />
         <label for="category">Categoría:</label>
         <input type="text" id="category" name="category" required><br>
-
+        <br />
         <button type="submit">Crear Producto</button>
     </form>
 
     <br>
-    <a href="/premium/products">Volver a la lista de productos</a>
+    <a href="/premium/products">Volver a la página principal</a>
 
     <script>
         document.getElementById('createProductForm').addEventListener('submit', async (event) => {
-            event.preventDefault(); // Previene el envío tradicional del formulario
+            event.preventDefault(); 
 
             const formData = new FormData(event.target);
             const data = Object.fromEntries(formData.entries());
@@ -50,10 +51,11 @@
                 const result = await response.json();
 
                 if (response.ok) {
-                    alert("Producto creado correctamente"); // Muestra el mensaje de éxito
-                    event.target.reset(); // Limpia el formulario
+                    alert("Producto creado correctamente"); 
+
+                    event.target.reset();
                 } else {
-                    alert(result.error || 'Error al crear el producto'); // Muestra el mensaje de error
+                    alert(result.error || 'Error al crear el producto');
                 }
             } catch (error) {
                 console.error('Error:', error);

@@ -9,7 +9,6 @@ const cartsSchema = new mongoose.Schema({
         unique: true,
         required: true,
         },
-
     products: {
         type: [
             {
@@ -36,6 +35,6 @@ cartsSchema.pre("find", function() {
     this.populate("products.product").populate("user")
 })
 
-const cartsModel = mongoose.model(cartsCollection, cartsSchema);
+const cartModel = mongoose.model(cartsCollection, cartsSchema);
 
-export default cartsModel;
+export default cartModel;

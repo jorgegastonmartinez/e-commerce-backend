@@ -1,14 +1,14 @@
-import Ticket from '../dao/ticket/ticket.dao.js'
-import Cart from "../dao/cart/cart.dao.js"
+import TicketDAO from '../dao/ticket/ticket.dao.js'
+import CartDAO from "../dao/cart/cart.dao.js"
 import cartsModel from '../models/cart.model.js';
 import UserDTO from "../dto/user.dto.js";
 
-const ticketsService = new Ticket()
-const cartService = new Cart()
+const ticketService = new TicketDAO()
+const cartService = new CartDAO()
 
 export const getTickets = async (req, res) => {
     try {
-        let result = await ticketsService.getTickets()
+        let result = await ticketService.getTickets();
         res.send({ status: "success", result })
     } catch (error) {
         res.status(500).send({ status: "error", message: error.message })
@@ -18,7 +18,7 @@ export const getTickets = async (req, res) => {
 export const getTicketById = async (req, res) => {
     const { tid } = req.params
     try {
-        let ticket = await ticketsService.getTicketById(tid)
+        let ticket = await ticketService.getTicketById(tid);
         res.send({ status: "success", result: ticket })
     } catch (error) {
         res.status(500).send({ status: "error", message: error.message })
@@ -39,7 +39,7 @@ export const createTicket = async (req, res) => {
 
         const purchase_datetime = new Date(); 
         const amount = cart.total; 
-        const ticket = await ticketsService.createTicket({
+        const ticket = await ticketService.createTicket({ 
             purchase_datetime,
             amount,
             purchaser: userEmail,  
@@ -58,7 +58,7 @@ export const renderTicket = async (req, res) => {
     const { tid } = req.params;
 
     try {
-        const ticket = await ticketsService.getTicketById(tid);
+        const ticket = await ticketService.getTicketById(tid);
         if (!ticket) {
             return res.status(404).render('error', { message: 'Ticket no encontrado' });
         }
@@ -77,11 +77,10 @@ export const renderTicket = async (req, res) => {
             code: ticket.code,
             purchase_datetime: ticket.purchase_datetime,
             isCartEmpty: isCartEmpty,
-
-            role: req.session.user.role // Asegúrate de pasar el rol
+            role: req.session.user.role
         };
 
-        res.render('ticket', { ticket: ticketData,      userRole: req.session.user.role });
+        res.render('ticket', { ticket: ticketData, userRole: req.session.user.role });
     } catch (error) {
         console.error('Error al obtener el ticket:', error);
         res.status(500).render('error', { message: 'Error interno del servidor' });

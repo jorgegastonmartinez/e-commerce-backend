@@ -1,6 +1,7 @@
 import productModel from '../../models/product.model.js';
 
 export default class ProductDAO {
+    
     async getProducts(filter = {}, sortOptions = {}, limit = 10, page = 1) {
         try {
             const totalProducts = await productModel.countDocuments(filter);
@@ -25,7 +26,7 @@ export default class ProductDAO {
             console.error("Error en getProductById:", error);
             throw new Error("Error en getProductById");
         }
-    }
+    };
 
     async createProduct(productData) {
         try {
@@ -34,7 +35,7 @@ export default class ProductDAO {
             console.error("Error en createProduct:", error);
             throw new Error("Error en createProduct");
         }
-    }
+    };
 
     async updateProduct(pid, productData) {
         try {
@@ -43,7 +44,7 @@ export default class ProductDAO {
             console.error("Error en updateProduct:", error);
             throw new Error("Error en updateProduct");
         }
-    }
+    };
 
     async deleteProduct(pid) {
         try {
@@ -52,15 +53,16 @@ export default class ProductDAO {
             console.error("Error en deleteProduct:", error);
             throw new Error("Error en deleteProduct");
         }
-    }
+    };
 
     async existsByCode(code, excludeId = null) {
         try {
             const query = excludeId ? { code, _id: { $ne: excludeId } } : { code };
+            
             return await productModel.exists(query);
         } catch (error) {
             console.error("Error en existsByCode:", error);
             throw new Error("Error en existsByCode");
         }
-    }
-}
+    };
+};

@@ -1,11 +1,13 @@
 import cartModel from "../../models/cart.model.js";
-import productsModel from "../../models/product.model.js";
+import productModel from "../../models/product.model.js";
 import mongoose from "mongoose";
 
 export default class CartDAO {
+    
     async createCartForUser(userId) {
         try {
             let existingCart = await cartModel.findOne({ user: userId }).populate('products.product').populate('user').lean();
+
             if (existingCart) {
                 return { message: "Ya existe un carrito para este usuario", cart: existingCart };
             }
@@ -15,6 +17,7 @@ export default class CartDAO {
             });
 
             await newCart.save();
+
             return { message: "Carrito creado correctamente", cart: newCart };
         } catch (error) {
             console.error("Error al crear el carrito:", error);
@@ -47,7 +50,7 @@ export default class CartDAO {
                 console.error("Carrito no encontrado");
                 return res.status(404).json({ error: "Carrito no encontrado" });
             }
-            let product = await productsModel.findById(productId);
+            let product = await productModel.findById(productId);
 
             if (!product) {
                 console.error("Producto no encontrado");
@@ -102,7 +105,7 @@ export default class CartDAO {
             } else {
                 const productIds = cart.products.map(item => item.product._id);
 
-                const products = await productsModel.find({ _id: { $in: productIds } }).lean();
+                const products = await productModel.find({ _id: { $in: productIds } }).lean();
 
                 cart.total = cart.products.reduce((acc, item) => {
                     const product = products.find(p => p._id.toString() === item.product._id.toString());
@@ -135,7 +138,7 @@ export default class CartDAO {
 
             const productIds = products.map(item => item.product);
 
-            const productsInDB = await productsModel.find({ _id: { $in: productIds } }).lean();
+            const productsInDB = await productModel.find({ _id: { $in: productIds } }).lean();
 
             cart.products = products.map(item => {
                 const product = productsInDB.find(p => p._id.toString() === item.product.toString());
@@ -178,7 +181,6 @@ export default class CartDAO {
             }
 
             cart.products[productIndex].quantity = quantity;
-
             cart.total = cart.products.reduce((acc, item) => acc + item.quantity * item.product.price, 0);
 
             await cart.save();
@@ -225,4 +227,4 @@ export default class CartDAO {
             throw new Error("Ocurrió un error al obtener el carrito");
         }
     }
-}
+};
