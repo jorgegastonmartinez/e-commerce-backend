@@ -76,3 +76,26 @@ export const sendAccountDeletionEmail = async (user) => {
         console.error('Error al enviar el correo de eliminación de cuenta', error);
     }
 }
+
+export const sendProductDeletionEmail = async (user, product) => {
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: user.email,
+        subject: "Notificación de Eliminación de Producto",
+        html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+                <h1 style="color: #333;">Notificación de Eliminación de Producto</h1>
+                <p style="font-size: 16px;">Hola <strong>${user.first_name}</strong>,</p>
+                <p style="font-size: 16px;">Lamentamos informarte que tu producto "${product.title}" ha sido eliminado del sistema.</p>
+                <p style="font-size: 16px;">Si crees que esto es un error, por favor contacta a nuestro soporte.</p>
+                <p style="font-size: 16px;">Gracias por usar nuestro servicio.</p>
+            </div>
+        `,
+    };
+    try {
+        await transport.sendMail(mailOptions);
+        console.log('Correo de eliminación de producto enviado exitosamente');
+    } catch (error) {
+        console.error('Error al enviar el correo de eliminación de producto', error);
+    }
+}

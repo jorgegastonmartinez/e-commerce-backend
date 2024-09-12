@@ -80,7 +80,7 @@ export const loginUser = (req, res, next) => {
             if (user.role === 'admin') {
                 return res.redirect('/admin/products');
             } else if (user.role === 'premium') {
-                return res.redirect('premium/products')
+                return res.redirect('/premium/products')
             } else if (user.role === 'user') {
                 return res.redirect('/products');
             } else {
@@ -109,17 +109,12 @@ export const getCurrentUser = (req, res) => {
     const userDTO = new UserDTO(req.session.user);
     console.log(userDTO); 
     
-    res.render('current', { user: userDTO, isAdmin: req.session.user.role === 'admin' });
+    res.render('current', { user: userDTO, isAdmin: req.session.user.role === 'admin', isPremium: req.session.user.role === 'premium' });
     } catch (error) {
         console.error("Error al obtener el usuario actual:", error);
         return res.status(500).send({ error: "Error al obtener el usuario actual" });
     }
 };
-
-// export const githubCallback = (req, res) => {
-//     req.session.user = req.user;
-//     res.redirect("/products");
-// };
 
 export const githubCallback = async (req, res) => {
     try {

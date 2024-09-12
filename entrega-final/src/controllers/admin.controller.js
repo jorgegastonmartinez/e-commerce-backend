@@ -1,19 +1,14 @@
 import User from '../dao/user/user.dao.js';
 const userService = new User()
 
-
 export const changeUserRole = async (req, res) => {
     try {
         const { userId, role } = req.body;
-        console.log('userId:', userId);
-        console.log('role:', role);
-
 
         if (!userId || !role || (role !== 'premium' && role !== 'user')) {
             return res.status(400).send({ error: 'ID de usuario o rol inválido' });
         }
 
-        // Llama al servicio para actualizar el rol
         const result = await userService.updateUserRole(userId, role);
 
         if (!result) {

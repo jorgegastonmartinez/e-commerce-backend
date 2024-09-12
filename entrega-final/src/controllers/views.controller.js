@@ -31,34 +31,6 @@ export const renderProducts = async (req, res) => {
 };
 
 
-// export const renderCart = async (req, res) => {
-//     try {
-//         const { cid } = req.params;
-
-//         if (!mongoose.Types.ObjectId.isValid(cid)) {
-//             console.error(`ID de carrito no válido: ${cid}`);
-//             return res.status(400).json({ error: "ID de carrito no válido" });
-//         }
-
-//         // Obtener el carrito de la base de datos
-//         let cart = await cartModel.findById(cid).populate('products.product').populate('user').lean();
-
-//         if (!cart) {
-//             console.error(`Carrito no encontrado para ID: ${cid}`);
-//             return res.status(404).json({ error: "Carrito no encontrado" });
-//         }
-
-//         console.log('Carrito encontrado:', cart);
-
-//         // Renderizar la vista con los productos del carrito
-//         res.render('carts', { cart });
-//     } catch (error) {
-//         console.error("Error al obtener el carrito:", error);
-//         res.status(500).json({ error: "Ocurrió un error al obtener el carrito" });
-//     }
-// };
-
-
 export const renderCart = async (req, res) => {
     const { cid } = req.params;
 
@@ -124,5 +96,73 @@ export const deleteMessage = async (req, res) => {
         res.status(200).send('Mensaje eliminado');
     } catch (error) {
         res.status(500).send(error.message);
+    }
+};
+
+
+// PREMIUM!!!!!
+export const renderProductsPremium = async (req, res) => {
+    let page = parseInt(req.query.page);
+    if (!page) page = 1;
+
+    let result = await productModel.paginate({}, { page, limit: 10, lean: true });
+    result.prevLink = result.hasPrevPage
+        ? `http://localhost:8080/products?page=${result.prevPage}`
+        : '';
+    result.nextLink = result.hasNextPage
+        ? `http://localhost:8080/products?page=${result.nextPage}`
+        : '';
+    result.isValid = !(page <= 0 || page > result.totalPages);
+
+    const user = req.session.user;
+    const cartId = user ? user.cart : null;
+
+    console.log("Cart ID:", cartId);  // Verifica que este log muestra el cartId correctamente
+
+    // Renderiza la vista específica para usuarios premium
+    res.render("productsPremium", { ...result, user, cartId });
+};
+
+export const renderCartPremium = async (req, res) => {
+    const { cid } = req.params;
+
+    try {
+        console.log("Carrito ID recibido:", cid);
+
+        // Obtener el carrito desde la base de datos
+        const cart = await cartModel.findById(cid).populate('products.product').lean();  
+
+        if (!cart) {
+            console.error("Carrito no encontrado para el ID:", cid);
+            return res.status(404).json({ error: "Carrito no encontrado" });
+        }
+
+        // Obtener el usuario desde la sesión
+        const user = req.session.user;
+
+        if (!user) {
+            console.error("Usuario no encontrado en la sesión.");
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
+
+        // Renderizar la vista 'cartsPremium' con los productos del carrito y el usuario
+        res.render("cartsPremium", { cart, user });
+    } catch (error) {
+        console.error("Error al obtener el carrito:", error);
+        return res.status(500).json({ error: "Error al obtener el carrito" });
+    }
+};
+
+
+
+
+
+
+export const showCreateProductPage = (req, res) => {
+    try {
+        res.render('create-product'); // Renderiza la vista 'create-product.handlebars'
+    } catch (error) {
+        console.error("Error al renderizar la página de creación de producto:", error);
+        res.status(500).send({ error: "Error al renderizar la página de creación de producto" });
     }
 };

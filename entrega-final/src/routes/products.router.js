@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { isAuthenticated, isUser } from "../middleware/auth.js";
+import { isAuthenticated } from "../middleware/auth.js";
 import {
     getProducts,
     getProductById,
@@ -8,6 +8,6 @@ import {
 const router = Router();
 
 router.get("/products", isAuthenticated, getProducts);
-router.get("/products/:pid", isAuthenticated, isUser, getProductById);
+router.get("/products/:pid", isAuthenticated, getProductById);
 
 export default router;

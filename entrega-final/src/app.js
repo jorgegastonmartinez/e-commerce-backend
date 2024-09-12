@@ -22,6 +22,7 @@ import messageRouter from "./routes/messages.router.js";
 import ticketRouter from "./routes/ticket.router.js"
 import { sessionLogger } from './middleware/auth.js';
 import userRouter from "./routes/user.router.js";
+import premiumRouter from './routes/premium.router.js'
 
 dotenv.config();
 const app = express();
@@ -79,7 +80,8 @@ app.use('/api', productsRouter);
 app.use('/api', adminRouter);
 app.use('/api/messages', messageRouter);
 app.use('/api', ticketRouter);
-app.use("/api/users", userRouter);
+app.use("/api", userRouter);
+app.use('/api', premiumRouter);
 
 socketServer.on("connection", (socket) => {
     console.log('Un usuario se ha conectado');

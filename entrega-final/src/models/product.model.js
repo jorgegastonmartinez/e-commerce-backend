@@ -10,6 +10,7 @@ const productsSchema = new mongoose.Schema({
     price: { type: Number, required: true },
     stock: { type: Number, require: true },
     category: { type: String, require: true, max: 50 },
+    ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'users', required: true}, 
 });
 
 productsSchema.plugin(mongoosePaginate);

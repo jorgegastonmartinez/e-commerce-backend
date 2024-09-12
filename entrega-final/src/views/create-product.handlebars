@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Producto</title>
+</head>
+<body>
+    <h1>Crear un nuevo producto</h1>
+    <form id="createProductForm" action="/api/premium/products" method="POST">
+        <label for="title">Título:</label>
+        <input type="text" id="title" name="title" required><br>
+
+        <label for="description">Descripción:</label>
+        <input type="text" id="description" name="description" required><br>
+
+        <label for="code">Código:</label>
+        <input type="text" id="code" name="code" required><br>
+
+        <label for="price">Precio:</label>
+        <input type="number" id="price" name="price" step="0.01" required><br>
+
+        <label for="stock">Stock:</label>
+        <input type="number" id="stock" name="stock" required><br>
+
+        <label for="category">Categoría:</label>
+        <input type="text" id="category" name="category" required><br>
+
+        <button type="submit">Crear Producto</button>
+    </form>
+
+    <br>
+    <a href="/premium/products">Volver a la lista de productos</a>
+
+    <script>
+        document.getElementById('createProductForm').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Previene el envío tradicional del formulario
+
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/api/premium/products', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert("Producto creado correctamente"); // Muestra el mensaje de éxito
+                    event.target.reset(); // Limpia el formulario
+                } else {
+                    alert(result.error || 'Error al crear el producto'); // Muestra el mensaje de error
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al enviar la solicitud');
+            }
+        });
+    </script>
+
+</body>
+</html>

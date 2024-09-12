@@ -65,11 +65,8 @@ export default class User {
         }
     }
 
-    // DELETE INACTIVE USER
-
     deleteInactiveUsers = async (condition) => {
         try {
-            // Obtener los usuarios que coinciden con la condición
             const inactiveUsers = await usersModel.find(condition);
 
             // Si no hay usuarios inactivos, no se necesita eliminar

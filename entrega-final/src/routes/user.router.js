@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { upload } from "../utils.js";
-import { isAuthenticated, isPremium } from "../middleware/auth.js";
 import {
   getUsers,
   getUserById,
@@ -8,34 +7,20 @@ import {
   uploadDocuments,
   updateLastConnection,
   updateUser,
-  upgradeToPremium,
   deleteInactiveUsers
 } from "../controllers/user.controller.js";
 
-import {
-    getProducts,
-    createProduct,
-    updateProduct,
-    deleteProduct,
-} from "../controllers/product.controller.js";
-
 const router = Router();
 
-router.get("/", getUsers);
-router.get("/:uid", getUserById)
-router.post("/", saveUser)
-router.put('/:uid', updateUser);
+router.get("/users/", getUsers);
+router.get("/users/:uid", getUserById)
+router.post("/users/", saveUser)
+router.put('/users/:uid', updateUser);
 
-router.get("/premium/products", isAuthenticated, isPremium, getProducts);
-router.post("/premium/products", isAuthenticated, isPremium, createProduct);
-router.put("/premium/products/:pid", isAuthenticated, isPremium, updateProduct);
-router.delete("/premium/products/:pid", isAuthenticated, isPremium, deleteProduct);
-
-router.post('/:uid/documents', upload.array('documents'), uploadDocuments);
-router.put('/:uid/last-connection', updateLastConnection);
-router.put('/premium/:uid', upgradeToPremium);
+router.post('/users/:uid/documents', upload.array('documents'), uploadDocuments);
+router.put('/users/:uid/last-connection', updateLastConnection);
 
 // DELETE LAST CONNECTION
-router.delete('/inactive', deleteInactiveUsers);
+router.delete('/users/inactive', deleteInactiveUsers);
 
 export default router;

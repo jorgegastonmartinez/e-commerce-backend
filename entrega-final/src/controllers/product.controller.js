@@ -1,4 +1,10 @@
 import ProductDAO from '../dao/product/product.dao.js';
+import { sendProductDeletionEmail } from './nodemailer.controller.js';
+
+import User from '../dao/user/user.dao.js';
+import UserDTO from '../dto/user.dto.js';
+
+const usersService = new User()
 
 const productDAO = new ProductDAO();
 
@@ -63,9 +69,23 @@ export const getProductById = async (req, res) => {
 
 export const createProduct = async (req, res) => {
     let { title, description, code, price, stock, category } = req.body;
+    // const { userId } = req.session;
+
+    // if (!userId) {
+    //     return res.status(400).send({ status: "error", message: "User ID is required" });
+    // }
+
+
+    // const { userId } = req.session.user || {}; // Asegúrate de que userId esté presente
+
+    // if (!userId) {
+    //     console.log("No userId found in session");
+    //     return res.status(400).send({ status: "error", message: "User ID is required" });
+    // }
+
+    const userId = req.session.user?._id;
 
     if (!title || !description || !code || !price || isNaN(stock) || !category) {
-        console.log("Debes completar todos los campos");
         return res.status(400).send({ error: "Debes completar correctamente todos los campos" });
     }
     stock = Number(stock);
@@ -89,6 +109,7 @@ export const createProduct = async (req, res) => {
             price,
             stock,
             category,
+            ownerId: userId,
         });
 
         res.send({ result: "success", payload: result });
@@ -121,8 +142,7 @@ export const updateProduct = async (req, res) => {
 
         const result = await productDAO.updateProduct(pid, productToUpdate);
 
-        res.send({ result: "success", payload: result });
-
+        res.send({ result: "success", message: "Producto creado exitosamente", payload: result });
     } catch (error) {
         console.error("Error al actualizar el producto", error);
         res.status(500).send({ error: "Error al actualizar el producto" });
@@ -132,7 +152,19 @@ export const updateProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
     try {
         let { pid } = req.params;
+
+        const product = await productDAO.getProductById(pid);
+        if (!product) {
+            return res.status(404).send({ status: "error", message: "Product not found" });
+        }
+
+        const user = await usersService.getUserById(product.ownerId);
+        if (user && user.role === 'premium') {
+            await sendProductDeletionEmail(user, product);
+        }
+
         await productDAO.deleteProduct(pid);
+
         res.send({ result: "success", payload: { deletedCount: 1 } });
     } catch (error) {
         console.error("El producto no se ha podido eliminar", error);

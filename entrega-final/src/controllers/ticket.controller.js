@@ -76,10 +76,12 @@ export const renderTicket = async (req, res) => {
             cartId: ticket.cartId.toString(),
             code: ticket.code,
             purchase_datetime: ticket.purchase_datetime,
-            isCartEmpty: isCartEmpty
+            isCartEmpty: isCartEmpty,
+
+            role: req.session.user.role // Asegúrate de pasar el rol
         };
 
-        res.render('ticket', { ticket: ticketData });
+        res.render('ticket', { ticket: ticketData,      userRole: req.session.user.role });
     } catch (error) {
         console.error('Error al obtener el ticket:', error);
         res.status(500).render('error', { message: 'Error interno del servidor' });

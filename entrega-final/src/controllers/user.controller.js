@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import User from '../dao/user/user.dao.js';
 import path from 'path';
 import UserDTO from '../dto/user.dto.js';
@@ -16,10 +17,6 @@ const usersService = new User()
 export const getUsers = async (req, res) => {
     try {
 
-    //       // Verificar si el usuario es admin
-    // if (req.session.user.role !== 'admin') {
-    //     return res.status(403).send('Acceso denegado. Solo el administrador puede acceder a esta página.');
-    // }
 
         // Utiliza el servicio para obtener los usuarios
         let users = await usersService.getUsers(); 
@@ -44,6 +41,14 @@ res.render('users', { users: usersDTO });
 export const getUserById = async (req, res) => {
     try {
         const { uid } = req.params;
+
+ // Validar que uid sea un ObjectId válido
+ if (!mongoose.Types.ObjectId.isValid(uid)) {
+    return res.status(400).send({ status: "error", message: "Invalid user ID" });
+}
+
+
+
         const user = await usersService.getUserById(uid);
         if (!user) {
             return res.status(404).send({ status: "error", message: "User not found" });
