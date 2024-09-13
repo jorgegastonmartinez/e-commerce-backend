@@ -68,21 +68,48 @@ export const addProductToCart = async (req, res) => {
     }
 };
 
+// export const removeProductFromCart = async (req, res) => {
+//     try {
+//         const { cid, pid } = req.params;
+
+//         if (!mongoose.Types.ObjectId.isValid(cid) || !mongoose.Types.ObjectId.isValid(pid)) {
+//             return res.status(400).json({ error: "ID de carrito o producto no válido" });
+//         }
+//         const { message, cart } = await cartService.removeProductFromCart(cid, pid);
+
+//         res.status(200).json({ message, cart });
+//     } catch (error) {
+//         console.error("Error al eliminar producto del carrito:", error);
+//         res.status(500).json({ error: "Ocurrió un error al eliminar producto del carrito" });
+//     }
+// };
+
+
+
 export const removeProductFromCart = async (req, res) => {
     try {
         const { cid, pid } = req.params;
 
+        // Validar IDs
         if (!mongoose.Types.ObjectId.isValid(cid) || !mongoose.Types.ObjectId.isValid(pid)) {
             return res.status(400).json({ error: "ID de carrito o producto no válido" });
         }
-        const { message, cart } = await cartService.removeProductFromCart(cid, pid);
 
-        res.status(200).json({ message, cart });
+        // Llamada al servicio para eliminar el producto
+        const result = await cartService.removeProductFromCart(cid, pid);
+
+        // Verificar si se obtuvo una respuesta válida del servicio
+        if (!result || !result.cart) {
+            return res.status(404).json({ error: "No se encontró el carrito o el producto para eliminar" });
+        }
+
+        res.status(200).json({ message: result.message || "Producto eliminado exitosamente", cart: result.cart });
     } catch (error) {
-        console.error("Error al eliminar producto del carrito:", error);
+        console.error(`Error al eliminar producto del carrito (Carrito ID: ${req.params.cid}, Producto ID: ${req.params.pid}):`, error);
         res.status(500).json({ error: "Ocurrió un error al eliminar producto del carrito" });
     }
 };
+
 
 export const updateCart = async (req, res) => {
     const { cid } = req.params;

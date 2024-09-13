@@ -41,6 +41,14 @@ export const loginUser = (req, res, next) => {
     if (!user) {
         return res.status(400).send({ status: "Error", error: "Error al iniciar sesión" });
     }
+
+    // Restablecer el contador de intentos fallidos si la autenticación es exitosa
+    const email = req.body.email;
+    if (req.session.failedAttempts && req.session.failedAttempts[email]) {
+        delete req.session.failedAttempts[email];
+    }
+
+    
     req.logIn(user, async (err) => {
         if (err) {
         return next(err);

@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <title>Carrito</title>
 </head>
-
 <body>
     <h1>Carrito de {{user.first_name}} {{user.last_name}}</h1>
-
-    <h1>Carrito ID: {{cart._id}}</h1>
 
     {{#if cart.products.length}}
     <ul>
         {{#each cart.products}}
         <li>
             Producto: {{this.product.title}} - Cantidad: {{this.quantity}} - Precio: {{this.product.price}}
+            <form class="delete-product-form" data-product-id="{{this.product._id}}">
+                <button type="submit">Eliminar Producto</button>
+            </form>
         </li>
         {{/each}}
     </ul>
@@ -35,6 +34,37 @@
         <button type="submit">Ir a la tienda</button>
     </form>
     {{/if}}
-</body>
 
+    <script>
+        const cartId = "{{cart._id}}";
+
+        document.querySelectorAll('.delete-product-form').forEach(form => {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const productId = form.getAttribute('data-product-id');
+
+                try {
+                    const response = await fetch(`/api/carts/${cartId}/products/${productId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(errorText);
+                    }
+
+                    alert('Producto eliminado');
+                    window.location.reload();
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert(`Error al eliminar el producto: ${error.message}`);
+                }
+            });
+        });
+    </script>
+</body>
 </html>

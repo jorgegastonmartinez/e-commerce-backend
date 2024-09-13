@@ -28,7 +28,7 @@ export const getProducts = async (req, res) => {
             sortOptions.price = sort === "asc" ? 1 : -1;
         }
 
-        const { products, totalProducts } = await productService.getProducts(filter, sortOptions, limit, page); ///////
+        const { products, totalProducts } = await productService.getProducts(filter, sortOptions, limit, page);
         const totalPages = Math.ceil(totalProducts / limit);
 
         const response = {
@@ -73,17 +73,19 @@ export const createProduct = async (req, res) => {
     if (!title || !description || !code || !price || isNaN(stock) || !category) {
         return res.status(400).send({ error: "Debes completar correctamente todos los campos" });
     }
+    price = Number(price);
     stock = Number(stock);
-    if (stock <= 0) {
-        console.log("El STOCK debe ser mayor que 0");
-        return res.status(400).send({ error: "El campo STOCK debe ser mayor que 0" });
-    }
 
+    if (stock <= 0) {
+        return res.status(400).send({ error: "El campo Stock debe ser mayor que 0" });
+    }
+    if (price < 100) {
+        return res.status(400).send({ error: "El precio debe ser mayor que 100" });
+    }
     try {
         const codeExists = await productService.existsByCode(code);
 
         if (codeExists) {
-            console.log("El campo code ya existe con ese número");
             return res.status(400).send({ error: "El campo code ya existe con ese número" });
         }
 
@@ -98,7 +100,6 @@ export const createProduct = async (req, res) => {
         });
 
         res.send({ result: "success", payload: result });
-
     } catch (error) {
         console.error("Error al crear el producto", error);
         res.status(500).send({ error: "Error al crear el producto" });
@@ -107,10 +108,20 @@ export const createProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
     let { pid } = req.params;
-    let productToUpdate = req.body;
+    let { title, description, code, price, stock, category } = req.body;
 
-    if (!productToUpdate.title || !productToUpdate.description || !productToUpdate.code || !productToUpdate.price || isNaN(productToUpdate.stock) || !productToUpdate.category) {
+    if (!title || !description || !code || !price || isNaN(stock) || !category) {
         return res.status(400).send({ status: "Error", error: "Debe completar todos los campos del producto" });
+    }
+    stock = Number(stock);
+    price = Number(price);
+
+    if (stock <= 0) {
+        return res.status(400).send({ status: "Error", error: "El stock debe ser mayor que 0" });
+    }
+
+    if (price < 100) {
+        return res.status(400).send({ status: "Error", error: "El precio debe ser mayor que 100" });
     }
 
     try {
@@ -119,12 +130,13 @@ export const updateProduct = async (req, res) => {
             return res.status(400).send({ error: "Producto no encontrado" });
         }
 
-        const codeExists = await productService.existsByCode(productToUpdate.code, pid);
+        const codeExists = await productService.existsByCode(code, pid);
 
         if (codeExists) {
             return res.status(400).send({ error: "El campo code ya está siendo utilizado por otro producto" });
         }
 
+        const productToUpdate = { title, description, code, price, stock, category };
         const result = await productService.updateProduct(pid, productToUpdate);
 
         res.send({ result: "success", message: "Producto creado exitosamente", payload: result });

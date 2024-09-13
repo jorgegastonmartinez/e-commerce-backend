@@ -1,6 +1,11 @@
 import passport from "passport";
 import { Router } from "express";
 import { isAuthenticated } from "../../middleware/auth.js";
+
+import { validateRegister } from "../../middleware/validateRegister.js";
+import { validateLogin } from "../../middleware/validateLogin.js";
+
+
 import {
    registerUser,
    failRegister,
@@ -18,9 +23,9 @@ import {
 
 const router = Router();
 
-router.post("/register", registerUser);
+router.post("/register", validateRegister, registerUser);
 router.get("/failregister", failRegister);
-router.post("/login", loginUser);
+router.post("/login", validateLogin, loginUser);
 router.get("/faillogin", failLogin);
 router.post("/logout", logoutUser);
 router.get("/current", isAuthenticated, getCurrentUser);

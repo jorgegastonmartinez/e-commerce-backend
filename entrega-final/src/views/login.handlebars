@@ -1,11 +1,22 @@
 <h2>Iniciar sesión</h2>
+{{#if errors}}
+    <ul style="color: red;">
+        {{#each errors}}
+            <li>{{this.msg}}</li>
+        {{/each}}
+    </ul>
+{{/if}}
+
 <form action="/api/sessions/login" method="POST">
-    <label for="email">Email</label>
-    <input type="email" name="email" required>
-    <label for="password">Contraseña</label>
+    <label for="email">Email:</label>
+    <input type="email" name="email" value="{{formData.email}}" required>
+    
+    <label for="password">Contraseña:</label>
     <input type="password" name="password" required>
-    <button type="submit">Ingresar</button>
+
+    <button type="submit">Iniciar sesión</button>
 </form>
+
 <br>
 <div>
     <a href="/api/sessions/forgot-password"><button>¿Olvidaste la contraseña?</button></a>
