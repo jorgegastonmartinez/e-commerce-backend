@@ -90,15 +90,12 @@ export const removeProductFromCart = async (req, res) => {
     try {
         const { cid, pid } = req.params;
 
-        // Validar IDs
         if (!mongoose.Types.ObjectId.isValid(cid) || !mongoose.Types.ObjectId.isValid(pid)) {
             return res.status(400).json({ error: "ID de carrito o producto no válido" });
         }
 
-        // Llamada al servicio para eliminar el producto
         const result = await cartService.removeProductFromCart(cid, pid);
 
-        // Verificar si se obtuvo una respuesta válida del servicio
         if (!result || !result.cart) {
             return res.status(404).json({ error: "No se encontró el carrito o el producto para eliminar" });
         }

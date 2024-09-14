@@ -33,6 +33,17 @@
     </tbody>
 </table>
 <br />
+
+
+
+<!-- Botón para eliminar usuarios inactivos -->
+<button id="delete-inactive-users">Eliminar Usuarios Inactivos</button>
+
+
+<!-- Contenedor para mostrar los resultados -->
+<div id="result"></div>
+
+
 <a href="/admin/products">Volver a la página principal</a>
 
 <script>
@@ -110,4 +121,40 @@
         });
     });
 
+    document.getElementById('delete-inactive-users').addEventListener('click', async () => {
+        const confirmDelete = confirm('¿Estás seguro de que deseas eliminar los usuarios inactivos?');
+        if (!confirmDelete) {
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/users/inactive', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const result = await response.json();
+
+            if (response.status === 404) {
+                document.getElementById('result').innerHTML = `<p>${result.message}</p>`;
+            } else if (response.ok) {
+                const usersList = result.users.map(user => 
+                    `<li>${user.email} - Última conexión: ${new Date(user.last_connection).toLocaleString()}</li>`
+                ).join('');
+                document.getElementById('result').innerHTML = `
+                    <p>${result.message}</p>
+                    <ul>${usersList}</ul>
+                `;
+            } else {
+                throw new Error(result.message);
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('result').innerHTML = `<p>Error al eliminar los usuarios inactivos: ${error.message}</p>`;
+        }
+    });
+    
 </script>

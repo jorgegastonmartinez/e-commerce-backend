@@ -147,7 +147,8 @@ export const deleteInactiveUsers = async (req, res) => {
 
     try {
         const { deletedCount, deletedUsers } = await userService.deleteInactiveUsers({
-            last_connection: { $lt: twoDaysAgo }
+            last_connection: { $lt: twoDaysAgo },
+            role: { $ne: 'admin' }
         });
 
         if (deletedCount === 0) {

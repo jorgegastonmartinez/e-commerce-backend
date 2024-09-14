@@ -25,7 +25,6 @@ export const renderProducts = async (req, res) => {
     res.render("products", { ...result, user, cartId});
 };
 
-
 export const renderCart = async (req, res) => {
     const { cid } = req.params;
 
