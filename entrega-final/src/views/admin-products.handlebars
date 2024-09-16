@@ -36,7 +36,7 @@
     {{#each docs}}
     <div>
         <h2>Producto: {{this.title}} &nbsp; descripción: {{this.description}}</h2>
-        <h4>Precio: {{this.price}} &nbsp; Stock: {{this.stock}}</h4>
+        <h4>Precio $ {{this.price}} &nbsp; Stock: {{this.stock}}</h4>
 
         <form class="delete-product-form" data-product-id="{{this._id}}">
             <button type="submit">Eliminar Producto</button>

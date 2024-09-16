@@ -34,7 +34,7 @@
             {{#each docs}}
             <div>
                 <h2>Producto: {{this.title}} &nbsp; descripcion: {{this.description}}</h2>
-                <h4>Precio: {{this.price}} &nbsp; Stock: {{this.stock}}</h4>
+                <h4>Precio $ {{this.price}} &nbsp; Stock: {{this.stock}}</h4>
                 <form class="add-to-cart-form" data-product-id="{{this._id}}">
                     <button type="submit">Agregar producto</button>
                 </form>

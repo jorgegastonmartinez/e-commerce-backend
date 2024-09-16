@@ -11,7 +11,7 @@
     <ul>
         {{#each cart.products}}
         <li>
-            Producto: {{this.product.title}} - Cantidad: {{this.quantity}} - Precio: {{this.product.price}}
+            Producto: {{this.product.title}} - Cantidad: {{this.quantity}} - Precio $ {{this.product.price}}
             <form class="delete-product-form" data-product-id="{{this.product._id}}">
                 <button type="submit">Eliminar Producto</button>
             </form>
