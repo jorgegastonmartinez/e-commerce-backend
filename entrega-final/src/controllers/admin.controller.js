@@ -1,4 +1,5 @@
 import User from '../dao/user/user.dao.js';
+
 const userService = new User()
 
 export const changeUserRole = async (req, res) => {

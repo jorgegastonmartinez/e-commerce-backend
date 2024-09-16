@@ -2,8 +2,6 @@ import ProductDAO from '../dao/product/product.dao.js';
 import { sendProductDeletionEmail } from './nodemailer.controller.js';
 import UserDAO from '../dao/user/user.dao.js';
 
-// import UserDTO from '../dto/user.dto.js';
-
 const usersService = new UserDAO()
 const productService = new ProductDAO();
 
@@ -55,6 +53,7 @@ export const getProductById = async (req, res) => {
     try {
         let { pid } = req.params;
         const product = await productService.getProductById(pid);
+        
         if (!product) {
             return res.status(400).send({ error: "Producto no encontrado" });
         }

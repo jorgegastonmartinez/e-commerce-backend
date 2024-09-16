@@ -8,7 +8,6 @@ import bcrypt from 'bcrypt';
 import CartDAO from '../dao/cart/cart.dao.js';
 
 const cartService = new CartDAO();
-
 dotenv.config();
 
 export const registerUser = (req, res, next) => {

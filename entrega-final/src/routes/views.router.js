@@ -29,6 +29,6 @@ router.get("/admin/products", isAuthenticated, isAdmin, getProductsForAdmin);
 router.get("/ticket/:tid", isAuthenticated, getProductsForAdmin);
 router.get("/premium/carts/:cid", isAuthenticated, isPremium, renderCartPremium);
 router.get("/premium/products", isAuthenticated, isPremium, renderProductsPremium);
-router.get("/create-product", showCreateProductPage);
+router.get("/create-product", isAuthenticated, isPremium, showCreateProductPage);
 
 export default router;

@@ -4,7 +4,7 @@ import path from 'path';
 import UserDTO from '../dto/user.dto.js';
 import { sendAccountDeletionEmail } from '../controllers/nodemailer.controller.js';
 
-const userService = new UserDAO()
+const userService = new UserDAO();
 
 export const getUsers = async (req, res) => {
     try {
@@ -28,12 +28,12 @@ export const getUserById = async (req, res) => {
         const { uid } = req.params;
 
         if (!mongoose.Types.ObjectId.isValid(uid)) {
-            return res.status(400).send({ status: "error", message: "Invalid user ID" });
+            return res.status(400).send({ status: "error", message: "ID de usuario no válido" });
         }
 
         const user = await userService.getUserById(uid);
         if (!user) {
-            return res.status(404).send({ status: "error", message: "User not found" });
+            return res.status(404).send({ status: "error", message: "Usuario no encontrado" });
         }
 
         res.send({ status: "success", result: user });

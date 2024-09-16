@@ -1,10 +1,8 @@
 import passport from "passport";
 import { Router } from "express";
 import { isAuthenticated } from "../../middleware/auth.js";
-
 import { validateRegister } from "../../middleware/validateRegister.js";
 import { validateLogin } from "../../middleware/validateLogin.js";
-
 
 import {
    registerUser,

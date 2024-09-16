@@ -1,4 +1,3 @@
-// import mongoose from "mongoose";
 import productModel from "../models/product.model.js";
 import messageModel from '../models/message.model.js';
 import cartModel from "../models/cart.model.js";
@@ -134,7 +133,7 @@ export const renderCartPremium = async (req, res) => {
 
 export const showCreateProductPage = (req, res) => {
     try {
-        res.render('create-product'); // Renderiza la vista 'create-product.handlebars'
+        res.render('create-product');
     } catch (error) {
         console.error("Error al renderizar la página de creación de producto:", error);
         res.status(500).send({ error: "Error al renderizar la página de creación de producto" });

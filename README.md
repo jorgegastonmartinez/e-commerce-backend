@@ -35,7 +35,7 @@ Este proyecto es un backend para una aplicación de e-commerce, construido con N
 ### 🔑 Gestión de usuarios
 El sistema admite tres tipos de usuarios:
 
-- **👤 Usuario regular:** Deberá registrarse para poder navegar por los productos, chatear con el administrador, agregar productos al carrito y finalizar una compra.
+- **👤 Usuario regular:** Deberá completar todos los datos del registro correctamente para poder entrar al sitio. La contraseña debe tener al menos 6 caracteres, debe ser mayor de 18 años de edad, el email debe ser con un formato válido y no puede repetirse si un usuario ya se registró con ese email. Si el usuario olvidó su contraseña, podrá solicitar el restablecimiento de la misma mediante un enlace al email.
 - **⭐ Usuario premium:** Tiene beneficios adicionales, como subir un producto al e-commerce.
 - **🛠️ Administrador:** Gestiona los productos, responde al chat de los usuarios, supervisa las compras y elimina usuarios inactivos.
 

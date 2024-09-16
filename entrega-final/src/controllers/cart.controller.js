@@ -68,24 +68,6 @@ export const addProductToCart = async (req, res) => {
     }
 };
 
-// export const removeProductFromCart = async (req, res) => {
-//     try {
-//         const { cid, pid } = req.params;
-
-//         if (!mongoose.Types.ObjectId.isValid(cid) || !mongoose.Types.ObjectId.isValid(pid)) {
-//             return res.status(400).json({ error: "ID de carrito o producto no válido" });
-//         }
-//         const { message, cart } = await cartService.removeProductFromCart(cid, pid);
-
-//         res.status(200).json({ message, cart });
-//     } catch (error) {
-//         console.error("Error al eliminar producto del carrito:", error);
-//         res.status(500).json({ error: "Ocurrió un error al eliminar producto del carrito" });
-//     }
-// };
-
-
-
 export const removeProductFromCart = async (req, res) => {
     try {
         const { cid, pid } = req.params;
@@ -106,7 +88,6 @@ export const removeProductFromCart = async (req, res) => {
         res.status(500).json({ error: "Ocurrió un error al eliminar producto del carrito" });
     }
 };
-
 
 export const updateCart = async (req, res) => {
     const { cid } = req.params;

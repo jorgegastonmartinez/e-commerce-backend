@@ -21,9 +21,11 @@ const initializePassport = () => {
                 }
 
                 let role = "user";
+                
                 if (email === 'adminCoder@coder.com' && password === 'adminCod3r123') {
                     role = 'admin';
                 }
+
                 const newUser = new userService( {
                     first_name,
                     last_name, 
