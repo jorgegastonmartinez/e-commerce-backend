@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node --watch entrega-final/src/app.js",
+    "start": "node entrega-final/src/app.js",
     "start:dev": "NODE_ENV=development node --watch entrega-final/src/app.js",
     "start:prod": "NODE_ENV=production node --watch entrega-final/src/app.js"
   },
