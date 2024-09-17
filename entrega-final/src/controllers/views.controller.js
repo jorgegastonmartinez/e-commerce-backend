@@ -69,11 +69,14 @@ export const getProductsForAdmin = async (req, res) => {
     if (!page) page = 1;
 
     let result = await productModel.paginate({}, { page, limit: 10, lean: true });
+
+    const baseUrl = process.env.BASE_URL; 
+
     result.prevLink = result.hasPrevPage
-    ? `http://localhost:8080/admin/products?page=${result.prevPage}`
+    ? `${baseUrl}/admin/products?page=${result.prevPage}`
     : '';
     result.nextLink = result.hasNextPage
-    ? `http://localhost:8080/admin/products?page=${result.nextPage}`
+    ? `${baseUrl}/admin/products?page=${result.nextPage}`
     : '';
     result.isValid = !(page <= 0 || page > result.totalPages);
 
@@ -100,11 +103,14 @@ export const renderProductsPremium = async (req, res) => {
     if (!page) page = 1;
 
     let result = await productModel.paginate({}, { page, limit: 10, lean: true });
+
+    const baseUrl = process.env.BASE_URL;
+    
     result.prevLink = result.hasPrevPage
-        ? `http://localhost:8080/products?page=${result.prevPage}`
+        ? `${baseUrl}/products?page=${result.prevPage}`
         : '';
     result.nextLink = result.hasNextPage
-        ? `http://localhost:8080/products?page=${result.nextPage}`
+        ? `${baseUrl}/products?page=${result.nextPage}`
         : '';
     result.isValid = !(page <= 0 || page > result.totalPages);
 
