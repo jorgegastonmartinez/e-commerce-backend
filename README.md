@@ -10,21 +10,6 @@ Backend 53150
 
 Jorge Martinez.
 
-## Comandos
-
-1. Clonar el repositorio desde Github
-```
-git clone https://github.com/jorgegastonmartinez/e-commerce-backend.git
-```
-2. Instalar las dependencias
-```
-npm install
-```
-
-3. Correr el servidor
-```
-npm start
-```
 
 ## Descripción
 
@@ -58,18 +43,40 @@ El sistema admite tres tipos de usuarios:
 
 ## Instrucciones de uso
 
-Descargue el proyecto, desde GitHub y ejecútelo en su ordenador. Dentro del archivo .env.example se encuentran todas las variables de entorno necesarias.
+Haz click en el enlace para poder usar la app
+```
+URL DE RAILWAY
+```
 
-Credenciales para el Admin
+Para ejecutar el proyecto en su ordenador, descargue el proyecto, desde GitHub y copie los comandos proporcionados mas abajo.
+
+Dentro del archivo .env.example se encuentran todas las variables de entorno necesarias.
+
+Credenciales para el usuario con el rol de Admin
 ```
 email: adminCoder@coder.com
 contraseña: adminCod3r123
 ```
 
+## Comandos
+
+1. Clonar el repositorio desde Github
+```
+git clone https://github.com/jorgegastonmartinez/e-commerce-backend.git
+```
+2. Instalar las dependencias
+```
+npm install
+```
+3. Correr el servidor
+```
+npm run start
+```
+
 
 ## Imagenes del proyecto
 
-### Método GET, para obtener los usuarios con los siguiente datos: nombre, correo y rol. desde el router.get('/api/users/', getUsers)
+### Método GET, para obtener los usuarios con los siguiente datos: nombre, correo y rol. Desde el router.get('/api/users/', getUsers)
 ![](./entrega-final/src/public/img/Captura%20de%20pantalla%202024-09-14%20a%20la(s)%205.02.58 p. m..png)
 
 ### Método DELETE para borrar los usuarios que no tuvieron conexión en los ultimos 2 días. Desde el router.delete('/api/users/inactive', deleteInactiveUsers)
