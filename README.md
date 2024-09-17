@@ -45,7 +45,7 @@ El sistema admite tres tipos de usuarios:
 
 Haz click en el enlace para poder usar la app
 ```
-URL DE RAILWAY
+e-commerce-backend-production-9f93.up.railway.app
 ```
 
 Para ejecutar el proyecto en su ordenador, descargue el proyecto, desde GitHub y copie los comandos proporcionados mas abajo.
