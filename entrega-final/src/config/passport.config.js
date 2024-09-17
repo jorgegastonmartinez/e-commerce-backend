@@ -42,7 +42,7 @@ const initializePassport = () => {
         }
     ))
 
-        passport.use("login", new localStrategy({usernameField:"email"}, async(username, password, done) => {
+    passport.use("login", new localStrategy({usernameField:"email"}, async(username, password, done) => {
     try {
         const user = await userService.findOne({ email: username });
         if (!user) {
@@ -60,7 +60,7 @@ const initializePassport = () => {
             return done (error)
         }
     })
-)
+    )
 
     passport.use("github", new GitHubStrategy({
         clientID: process.env.GITHUB_CLIENT_ID,

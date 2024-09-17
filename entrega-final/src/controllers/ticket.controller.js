@@ -13,7 +13,7 @@ export const getTickets = async (req, res) => {
     } catch (error) {
         res.status(500).send({ status: "error", message: error.message })
     }
-}
+};
 
 export const getTicketById = async (req, res) => {
     const { tid } = req.params
@@ -23,7 +23,7 @@ export const getTicketById = async (req, res) => {
     } catch (error) {
         res.status(500).send({ status: "error", message: error.message })
     }
-}
+};
 
 export const createTicket = async (req, res) => {
     const { cid } = req.params;
@@ -52,7 +52,7 @@ export const createTicket = async (req, res) => {
     } catch (error) {
         res.status(500).send({ status: "error", message: error.message })
     }
-}
+};
 
 export const renderTicket = async (req, res) => {
     const { tid } = req.params;

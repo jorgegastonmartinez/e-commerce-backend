@@ -3,8 +3,7 @@ import {
   isAdmin,
   isAuthenticated,
   isNotAuthenticated,
-  isUser,
-  isPremium,
+  isPremium
 } from "../middleware/auth.js";
 import {
   renderLogin,

@@ -61,7 +61,7 @@ export const updateUser = async (req, res) => {
 };
 
 export const saveUser = async (req, res) => {
-    const user = req.body
+    const user = req.body;
     let result = await userService.saveUser(user);
 
     res.send({ status: "success", result })

@@ -4,7 +4,7 @@ Entrega Final Curso de Backend.
 
 ## Curso
 
-Backend 53150
+Backend 53150.
 
 ## Autor
 
@@ -22,7 +22,7 @@ El sistema admite tres tipos de usuarios:
 
 - **👤 Usuario regular:** Deberá completar todos los datos del registro correctamente para poder entrar al sitio. La contraseña debe tener al menos 6 caracteres, debe ser mayor de 18 años de edad, el email debe ser con un formato válido y no puede repetirse si un usuario ya se registró con ese email. Si el usuario olvidó su contraseña, podrá solicitar el restablecimiento de la misma mediante un enlace al email.
 - **⭐ Usuario premium:** Tiene beneficios adicionales, como subir un producto al e-commerce.
-- **🛠️ Administrador:** Gestiona los productos, responde al chat de los usuarios, supervisa las compras y elimina usuarios inactivos.
+- **🛠️ Administrador:** Gestiona los productos, visualiza el chat de los usuarios, supervisa las compras y elimina usuarios.
 
 ### 🛒 Carrito de compras
 - Agregar productos a su carrito.
@@ -30,7 +30,7 @@ El sistema admite tres tipos de usuarios:
 - Finalizar la compra.
 
 ### 💬 Chat en tiempo real
-- Los usuarios pueden chatear directamente con el administrador del e-commerce para resolver dudas o solicitar soporte.
+- Los usuarios pueden enviar mensajes directamente al administrador del e-commerce para resolver dudas o solicitar soporte.
 
 ### ✅  Flujo de compra completo
 - Los usuarios pueden seleccionar productos y agregarlos al carrito.
@@ -45,7 +45,7 @@ El sistema admite tres tipos de usuarios:
 
 Haz click en el enlace para poder usar la app
 ```
-e-commerce-backend-production-9f93.up.railway.app
+https://e-commerce-backend-production-9f93.up.railway.app/
 ```
 
 Para ejecutar el proyecto en su ordenador, descargue el proyecto, desde GitHub y copie los comandos proporcionados mas abajo.
