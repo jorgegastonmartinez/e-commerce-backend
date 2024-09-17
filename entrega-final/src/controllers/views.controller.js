@@ -105,12 +105,12 @@ export const renderProductsPremium = async (req, res) => {
     let result = await productModel.paginate({}, { page, limit: 10, lean: true });
 
     const baseUrl = process.env.BASE_URL;
-    
+
     result.prevLink = result.hasPrevPage
-        ? `${baseUrl}/products?page=${result.prevPage}`
+        ? `${baseUrl}/premium/products?page=${result.prevPage}`
         : '';
     result.nextLink = result.hasNextPage
-        ? `${baseUrl}/products?page=${result.nextPage}`
+        ? `${baseUrl}/premium/products?page=${result.nextPage}`
         : '';
     result.isValid = !(page <= 0 || page > result.totalPages);
 
