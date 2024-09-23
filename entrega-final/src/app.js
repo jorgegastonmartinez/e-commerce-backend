@@ -83,6 +83,24 @@ app.use('/api', ticketRouter);
 app.use("/api", userRouter);
 app.use('/api', premiumRouter);
 
+app.use((req, res, next) => {
+    res.status(404).render('error', {
+        status: 404,
+        message: 'Lo sentimos, la página que buscas no existe.',
+        error: process.env.NODE_ENV === 'development' ? 'Página no encontrada' : null,
+    });
+});
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(err.status || 500).render('error', {
+        status: err.status || 500,
+        message: process.env.NODE_ENV === 'development'
+            ? err.message
+            : 'Ocurrió un error en el servidor. Estamos trabajando para solucionar el problema.',
+        stack: process.env.NODE_ENV === 'development' ? err.stack : null
+    });
+});
+
 socketServer.on("connection", (socket) => {
     console.log('Un usuario se ha conectado');
 

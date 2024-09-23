@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error {{status}}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+        h1 {
+            font-size: 4rem;
+            margin-top: 20%;
+        }
+        p {
+            font-size: 1.4rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>Error {{status}}</h1>
+    <p>{{message}}</p>
+    {{#if stack}}
+    <pre>{{stack}}</pre>
+    {{/if}}
+
+    <a href="javascript:void(0);" onclick="window.history.back();">Volver</a>
+
+</body>
+</html>
